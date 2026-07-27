@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Product - Joker Menswear</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+<h1>Add New Product</h1>
+
+
+<div class="admin-box">
+
+<form id="productForm">
+
+
+<input type="text" id="product_code" placeholder="Product Code">
+
+
+<input type="text" id="product_name" placeholder="Product Name">
+
+
+<input type="text" id="category" placeholder="Category (Shirt/T-Shirt/Pant)">
+
+
+<input type="text" id="brand" placeholder="Brand">
+
+
+<input type="number" id="price" placeholder="Price">
+
+
+<input type="number" id="offer_price" placeholder="Offer Price">
+
+
+<input type="number" id="stock" placeholder="Stock Quantity">
+
+
+<input type="text" id="sizes" placeholder="Sizes (M,L,XL)">
+
+
+<input type="text" id="image" placeholder="Main Image Path">
+
+
+<input type="text" id="images" placeholder="All Images (comma separated)">
+
+
+<input type="text" id="video" placeholder="Video Path">
+
+
+<textarea id="description" placeholder="Product Description"></textarea>
+
+
+<select id="status">
+
+<option value="1">Show Product</option>
+<option value="0">Hide Product</option>
+
+</select>
+
+
+<select id="new_arrival">
+
+<option value="1">New Arrival</option>
+<option value="0">Normal</option>
+
+</select>
+
+
+<select id="offer">
+
+<option value="1">Offer Product</option>
+<option value="0">Normal Price</option>
+
+</select>
+
+
+<button type="submit">
+Add Product
+</button>
+
+
+</form>
+
+</div>
+
+
+<script src="add-product.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Order Details - Joker Menswear</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f4f4f4;
+}
+
+
+/* Header */
+
+.header{
+
+    background:#111;
+    color:white;
+    padding:20px;
+
+}
+
+
+.header h1{
+
+    margin:0;
+    font-size:26px;
+
+}
+
+
+
+/* Main */
+
+.container{
+
+    padding:20px;
+    max-width:1100px;
+    margin:auto;
+
+}
+
+
+/* Order Box */
+
+#orderDetails{
+
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.12);
+
+}
+
+
+/* Tables */
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+
+}
+
+
+th{
+
+    background:#111;
+    color:white;
+    padding:12px;
+    text-align:left;
+
+}
+
+
+td{
+
+    padding:12px;
+    border-bottom:1px solid #ddd;
+
+}
+
+
+
+/* Buttons */
+
+button{
+
+    background:#111;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:25px;
+    margin:5px;
+    cursor:pointer;
+
+}
+
+
+button:hover{
+
+    background:#444;
+
+}
+
+
+
+/* Select */
+
+select{
+
+    padding:10px;
+    border-radius:20px;
+    border:1px solid #aaa;
+
+}
+
+
+
+/* Mobile */
+
+@media(max-width:600px){
+
+.container{
+
+    padding:10px;
+
+}
+
+
+#orderDetails{
+
+    padding:15px;
+
+}
+
+
+table{
+
+    font-size:14px;
+
+}
+
+
+.header h1{
+
+    font-size:21px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+<h1>📦 Order Details</h1>
+
+</div>
+
+
+<div class="container">
+
+
+<div id="orderDetails">
+
+Loading...
+
+</div>
+
+
+</div>
+
+
+
+<script src="order-details.js"></script>
+
+
+</body>
+
+</html>

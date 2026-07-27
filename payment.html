@@ -1,0 +1,231 @@
+Payment code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Joker Menswear</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="payment-container">
+
+        <div class="payment-logo">
+    <img src="images/logo.jpg" alt="Joker Menswear Logo">
+</div>
+
+    <h1>Complete Your Order</h1>
+
+    <div class="secure-badge">
+    🔒 100% Secure UPI Payment
+</div>
+
+<p class="payment-subtitle">
+Thank you for shopping with <strong>Joker Menswear</strong>. Please complete your payment and fill in the order details below.
+</p>
+<div class="product-summary">
+
+    <h3>Your Selected Product</h3>
+
+    <div id="imageContainer">
+
+   
+
+    <img id="productImage" src="" alt="Product">
+
+   
+
+</div>
+
+    <h2 id="productName">Product Name</h2>
+
+    <p class="price-label">Price</p>
+
+    <p id="productPrice">₹0</p>
+
+</div>
+<div class="order-process">
+
+    <h3>📋 Order Process</h3>
+
+    <ol>
+        <li>Fill in your delivery details.</li>
+
+        <li>Click <strong>Submit Order</strong> to send your order request.</li>
+
+        <li>Wait for confirmation from <strong>Joker Menswear</strong> regarding product availability.</li>
+
+        <li>Receive your <strong>Payment Verification Code</strong> from us.</li>
+
+        <li>Enter the verification code and click <strong>View Payment Details</strong>.</li>
+
+        <li>Complete the payment using the QR Code or UPI ID.</li>
+
+        <li>Your order will be processed after successful payment verification.</li>
+
+    </ol>
+
+</div>
+
+
+<h2 class="form-title">Delivery Details</h2>
+
+<form>
+
+    <label>Full Name</label><br>
+    <input type="text" id="name"><br><br>
+
+    <label>Mobile Number</label><br>
+    <input type="tel" id="phone"><br><br>
+
+    <label>Delivery Address</label><br>
+    <textarea id="address"></textarea><br><br>
+
+
+    <label>Size</label><br>
+    <select id="size">
+        <option>Select Size</option>
+        <option>S</option>
+        <option>M</option>
+        <option>L</option>
+        <option>XL</option>
+        <option>XXL</option>
+        <option>28</option>
+        <option>30</option>
+        <option>32</option>
+        <option>34</option>
+        <option>36</option>
+        <option>38</option>
+
+    </select><br><br>
+
+    <label>Quantity</label><br>
+    <input type="number" id="quantity"><br><br>
+
+
+<div class="payment-note">
+    
+    <h4>📌 Important</h4>
+    <p>
+        By clicking <strong>Submit Order</strong>, you are sending your order request to Joker Menswear.
+        Please wait for our confirmation regarding product availability.
+        After receiving our confirmation, click <strong>View Payment Details</strong> and complete the payment.
+        Your order will be processed only after successful payment verification.
+    </p>
+</div>
+
+<br>
+
+<button type="button" onclick="sendWhatsApp()">
+    Submit Order
+</button>
+
+</form>
+</div>
+    
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const productId = params.get("id");
+
+fetch("http://localhost:3000/products")
+.then(res => res.json())
+.then(data => {
+
+    console.log("Product ID:", productId);
+    console.log("API Data:", data);
+
+    const product = data.find(item => item.product_code == productId);
+
+    console.log("Selected Product:", product);
+
+    if(product){
+
+       document.getElementById("productImage").src =
+    Array.isArray(product.images)
+    ? product.images[0]
+    : product.images.split(",")[0].trim();
+
+        document.getElementById("productName").innerText =
+            product.product_name;
+
+        document.getElementById("productPrice").innerText =
+            "₹" + product.price;
+
+    }
+
+});
+
+function sendWhatsApp() {
+
+    let name = document.getElementById("name").value;
+    let phone = document.getElementById("phone").value;
+    let address = document.getElementById("address").value;
+    let size = document.getElementById("size").value;
+    let quantity = document.getElementById("quantity").value;
+
+    let productName = document.getElementById("productName").innerText;
+    let priceText = document.getElementById("productPrice").innerText;
+
+    let price = priceText.replace("₹","");
+
+
+    // Save order to database
+    fetch("http://localhost:3000/api/orders", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            customer_name: name,
+            phone: phone,
+            address: address,
+            product_name: productName,
+            size: size,
+            quantity: quantity,
+            price: price,
+            status: "Pending"
+
+        })
+
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        console.log("Order Saved:", data);
+
+
+        // Open WhatsApp
+        let message =
+`New Order - Joker Menswear
+
+Product: ${productName}
+Price: ${priceText}
+Size: ${size}
+Quantity: ${quantity}
+
+Customer Name: ${name}
+Mobile: ${phone}
+Address: ${address}`;
+
+        let url = "https://wa.me/919047154637?text=" + encodeURIComponent(message);
+
+    window.location.href = "admin-backend/payment-verification.html";
+
+    })
+    .catch(err => {
+        console.log("Order Error:", err);
+    });
+
+}
+
+</script>
+
+</body>
+</html>

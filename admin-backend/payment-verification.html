@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Payment Verification - Joker Menswear</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f4f4;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    margin:0;
+}
+
+.container{
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    width:90%;
+    max-width:400px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+
+h2{
+    text-align:center;
+}
+
+
+input,button{
+
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:5px;
+    box-sizing:border-box;
+    font-size:16px;
+
+}
+
+
+input{
+    border:1px solid #ccc;
+}
+
+
+button{
+
+    background:#000;
+    color:white;
+    border:none;
+    cursor:pointer;
+
+}
+
+
+.payment-box{
+
+    display:none;
+    margin-top:20px;
+    padding:15px;
+    border:1px solid #ddd;
+    border-radius:8px;
+
+}
+
+
+.success{
+    color:green;
+    font-weight:bold;
+    text-align:center;
+}
+
+
+.error{
+    color:red;
+    font-weight:bold;
+    text-align:center;
+}
+
+
+#statusBox{
+
+    display:none;
+    text-align:center;
+    margin-top:15px;
+
+}
+
+
+#loader{
+
+    display:none;
+
+}
+
+
+.spinner{
+
+    border:4px solid #eee;
+    border-top:4px solid black;
+    border-radius:50%;
+    width:35px;
+    height:35px;
+    animation:spin 1s linear infinite;
+    margin:15px auto;
+
+}
+
+
+@keyframes spin{
+
+0%{
+transform:rotate(0deg);
+}
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h2>Payment Verification</h2>
+
+
+<input 
+type="text"
+id="verificationCode"
+placeholder="Enter Verification Code">
+
+
+<button onclick="verifyCode()">
+Verify Code
+</button>
+
+
+
+<p id="message"></p>
+
+
+
+
+
+<div class="payment-box" id="paymentBox">
+
+
+<h3>Order Details</h3>
+
+
+<p>
+<strong>Customer:</strong>
+<span id="customerName"></span>
+</p>
+
+
+<p>
+<strong>Amount:</strong>
+₹<span id="orderAmount"></span>
+</p>
+
+
+
+<h3>Pay via UPI</h3>
+
+
+<div style="text-align:center;">
+
+<img 
+src="../images/upi-qr.png"
+alt="UPI QR Code"
+style="
+width:220px;
+height:220px;
+border:1px solid #ccc;
+border-radius:10px;
+object-fit:contain;
+"
+onerror="this.style.display='none'; alert('QR image not found');">
+
+</div>
+
+
+
+<p>
+<strong>UPI ID:</strong>
+vyapar.172141824482@hdfcbank
+</p>
+
+
+<p>
+<strong>Amount:</strong>
+₹<span id="payAmount"></span>
+</p>
+
+
+
+<input
+type="text"
+id="transactionId"
+placeholder="Enter UTR / Transaction ID">
+
+
+
+<button onclick="submitPayment()">
+
+Submit Transaction ID
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+
+<div id="statusBox">
+
+
+<div id="loader">
+
+<div class="spinner"></div>
+
+</div>
+
+
+<p id="statusMessage"></p>
+
+
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+
+<script>
+
+
+let currentOrderId = null;
+
+let paymentCheckInterval = null;
+
+
+
+
+
+async function verifyCode(){
+
+
+const code =
+document.getElementById("verificationCode").value;
+
+
+
+const response = await fetch(
+
+"http://localhost:3000/api/payment/verify-code",
+
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+verification_code:code
+
+})
+
+});
+
+
+const data = await response.json();
+
+
+
+
+if(data.success){
+
+
+document.getElementById("message").innerHTML =
+"<span class='success'>Code verified successfully!</span>";
+
+
+
+currentOrderId = data.payment.order_id;
+
+
+
+document.getElementById("customerName").innerText =
+data.payment.customer_name;
+
+
+
+document.getElementById("orderAmount").innerText =
+data.payment.total;
+
+
+
+document.getElementById("payAmount").innerText =
+data.payment.total;
+
+
+
+document.getElementById("paymentBox").style.display="block";
+
+
+}
+
+else{
+
+
+document.getElementById("message").innerHTML =
+"<span class='error'>Invalid verification code!</span>";
+
+}
+
+
+}
+
+
+
+
+
+
+
+async function submitPayment(){
+
+
+const transactionId =
+document.getElementById("transactionId").value;
+
+
+
+if(transactionId===""){
+
+alert("Enter Transaction ID");
+
+return;
+
+}
+
+
+
+
+const response = await fetch(
+
+"http://localhost:3000/api/payment/submit",
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+order_id:currentOrderId,
+
+transaction_id:transactionId,
+
+payment_method:"UPI"
+
+})
+
+});
+
+
+const data = await response.json();
+
+
+
+
+if(data.success){
+
+
+document.getElementById("message").innerHTML =
+"<span class='success'>Transaction submitted. Waiting for admin verification.</span>";
+
+
+
+document.getElementById("paymentBox").style.display="none";
+
+
+
+document.getElementById("statusBox").style.display="block";
+
+
+
+checkPaymentStatus();
+
+
+
+paymentCheckInterval =
+setInterval(checkPaymentStatus,3000);
+
+
+
+}
+
+else{
+
+
+document.getElementById("message").innerHTML =
+"<span class='error'>Payment submission failed.</span>";
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+async function checkPaymentStatus(){
+
+
+
+if(!currentOrderId){
+
+return;
+
+}
+
+
+
+
+const response = await fetch(
+
+`http://localhost:3000/api/payment/status/${currentOrderId}`
+
+);
+
+
+
+const data = await response.json();
+
+
+
+
+if(!data.success){
+
+return;
+
+}
+
+
+
+
+if(data.payment_status==="Pending"){
+
+
+document.getElementById("loader").style.display="block";
+
+
+document.getElementById("statusMessage").innerHTML =
+"Waiting for admin payment verification...";
+
+
+}
+
+
+
+else if(data.payment_status==="Paid"){
+
+
+
+document.getElementById("loader").style.display="none";
+
+
+document.getElementById("statusMessage").innerHTML =
+
+"<span class='success'>Payment verified successfully. Your order is confirmed.</span>";
+
+
+
+clearInterval(paymentCheckInterval);
+
+
+}
+
+
+
+
+else if(data.payment_status==="Rejected"){
+
+
+
+document.getElementById("loader").style.display="none";
+
+
+document.getElementById("statusMessage").innerHTML =
+
+"<span class='error'>Payment rejected: "
++ data.remarks +
+"</span>";
+
+
+
+clearInterval(paymentCheckInterval);
+
+
+}
+
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>

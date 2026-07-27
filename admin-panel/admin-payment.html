@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Payment Panel</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f4f4;
+    padding:20px;
+}
+
+.container{
+    max-width:650px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+h2,h3{
+    text-align:center;
+}
+
+input,button,select{
+
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:5px;
+    box-sizing:border-box;
+    font-size:16px;
+
+}
+
+
+input,select{
+    border:1px solid #ccc;
+}
+
+
+button{
+
+    border:none;
+    color:white;
+    cursor:pointer;
+
+}
+
+
+.generate{
+    background:#0066cc;
+}
+
+
+.approve{
+    background:green;
+}
+
+
+.reject{
+    background:red;
+}
+
+
+.payment-card{
+
+    border:1px solid #ddd;
+    padding:15px;
+    margin-top:15px;
+    border-radius:10px;
+    background:#fafafa;
+
+}
+
+
+#generatedCode{
+
+    text-align:center;
+    color:green;
+    font-weight:bold;
+
+}
+
+
+.empty{
+
+    text-align:center;
+    color:#777;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h2>Admin Payment Panel</h2>
+
+
+
+<h3>Generate Payment Code</h3>
+
+
+<input 
+type="number"
+id="orderId"
+placeholder="Enter Order ID">
+
+
+<button class="generate" onclick="generatePaymentCode()">
+
+Generate Payment Code
+
+</button>
+
+
+<p id="generatedCode"></p>
+
+
+
+<hr>
+
+
+
+<h3>Pending Payment Verification</h3>
+
+
+<div id="paymentList">
+
+<p class="empty">
+Loading...
+</p>
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+const API="http://localhost:3000";
+
+
+
+// Generate code
+
+async function generatePaymentCode(){
+
+
+let orderId=document.getElementById("orderId").value;
+
+
+if(orderId===""){
+
+alert("Enter Order ID");
+
+return;
+
+}
+
+
+
+let response=await fetch(
+API+"/api/payment/generate-code",
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+order_id:orderId
+
+})
+
+});
+
+
+
+let data=await response.json();
+
+
+
+if(data.success){
+
+
+document.getElementById("generatedCode").innerText=
+"Code: "+data.code;
+
+
+alert("Payment Code Generated: "+data.code);
+
+
+}
+
+else{
+
+
+alert(data.message);
+
+}
+
+
+}
+
+
+
+
+
+
+// Load pending payments
+
+
+function loadPayments(){
+
+
+
+fetch(API+"/api/payments/pending")
+
+
+.then(res=>res.json())
+
+
+.then(data=>{
+
+
+
+let list=document.getElementById("paymentList");
+
+
+list.innerHTML="";
+
+
+
+if(data.payments.length===0){
+
+
+list.innerHTML=
+`
+<p class="empty">
+No pending payments
+</p>
+`;
+
+return;
+
+}
+
+
+
+
+data.payments.forEach(payment=>{
+
+
+let card=document.createElement("div");
+
+
+card.className="payment-card";
+
+
+
+card.innerHTML=
+
+`
+
+<h3>
+Order ID: ${payment.order_id}
+</h3>
+
+
+<p>
+<strong>Customer:</strong>
+${payment.customer_name}
+</p>
+
+
+<p>
+<strong>Amount:</strong>
+₹${payment.total}
+</p>
+
+
+<p>
+<strong>Transaction ID:</strong>
+${payment.transaction_id}
+</p>
+
+
+<select id="reason${payment.order_id}">
+
+<option value="">
+Select rejection reason
+</option>
+
+<option>
+Wrong UTR number
+</option>
+
+<option>
+Payment not received
+</option>
+
+<option>
+Amount mismatch
+</option>
+
+<option>
+Less payment received
+</option>
+
+</select>
+
+
+
+<button class="approve"
+onclick="approvePayment(${payment.order_id})">
+
+Approve Payment
+
+</button>
+
+
+
+<button class="reject"
+onclick="rejectPayment(${payment.order_id})">
+
+Reject Payment
+
+</button>
+
+
+`;
+
+
+
+list.appendChild(card);
+
+
+});
+
+
+});
+
+
+}
+
+
+
+
+
+
+// Approve
+
+
+function approvePayment(orderId){
+
+
+
+fetch(API+"/api/payment/approve/"+orderId,{
+
+method:"PUT"
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+
+if(data.success){
+
+
+alert("Payment Approved");
+
+
+loadPayments();
+
+
+}
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+// Reject
+
+
+function rejectPayment(orderId){
+
+
+
+let reason=document.getElementById(
+"reason"+orderId
+).value;
+
+
+
+if(reason===""){
+
+
+alert("Select rejection reason");
+
+return;
+
+}
+
+
+
+fetch(API+"/api/payment/reject",{
+
+method:"PUT",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+order_id:orderId,
+
+remarks:reason
+
+})
+
+
+})
+
+
+.then(res=>res.json())
+
+
+.then(data=>{
+
+
+if(data.success){
+
+
+alert("Payment Rejected");
+
+
+loadPayments();
+
+
+}
+
+
+});
+
+
+}
+
+
+
+
+
+
+loadPayments();
+
+
+setInterval(loadPayments,5000);
+
+
+
+</script>
+
+
+</body>
+
+</html>

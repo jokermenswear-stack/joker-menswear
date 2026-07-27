@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Joker Menswear Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+<h1>Joker Menswear Dashboard</h1>
+
+<!-- Dashboard Count Cards -->
+<div class="dashboard-cards">
+
+    <div class="card">
+        <h3>Total Orders</h3>
+        <h1 id="totalOrders">0</h1>
+    </div>
+
+    <div class="card">
+        <h3>Pending Orders</h3>
+        <h1 id="pendingOrders">0</h1>
+    </div>
+
+    <div class="card">
+        <h3>Confirmed Orders</h3>
+        <h1 id="confirmedOrders">0</h1>
+    </div>
+
+    <div class="card">
+        <h3>Packed Orders</h3>
+        <h1 id="packedOrders">0</h1>
+    </div>
+
+    <div class="card">
+        <h3>Shipped Orders</h3>
+        <h1 id="shippedOrders">0</h1>
+    </div>
+
+    <div class="card">
+        <h3>Delivered Orders</h3>
+        <h1 id="deliveredOrders">0</h1>
+    </div>
+
+    <div class="card">
+        <h3>Cancelled Orders</h3>
+        <h1 id="cancelledOrders">0</h1>
+    </div>
+
+    <div class="card">
+        <h3>Total Revenue</h3>
+        <h1 id="totalRevenue">₹0</h1>
+    </div>
+
+</div>
+
+<!-- Management Boxes -->
+<div class="dashboard">
+
+    <div class="box">
+        <h2>Products</h2>
+        <p>Add / Edit / Delete Products</p>
+        <button onclick="location.href='products.html'">
+            Manage Products
+        </button>
+    </div>
+
+    <div class="box">
+        <h2>Orders</h2>
+        <p>View Customer Orders</p>
+        <button onclick="location.href='orders.html'">
+            Manage Orders
+        </button>
+    </div>
+
+
+    <div class="box">
+        <h2>Stock</h2>
+        <p>Update Inventory</p>
+        <button onclick="location.href='stock.html'">Manage Stock</button>
+    </div>
+
+    <div class="box">
+    <h2>Store Status</h2>
+    <p id="storeStatusText">Loading...</p>
+    <button id="storeToggleBtn" onclick="toggleStore()">
+        Loading...
+    </button>
+</div>
+
+<div class="box">
+
+    <h2>
+        Payment Verification
+        <span id="paymentCount">(0)</span>
+    </h2>
+
+    <p>Pending customer payment approvals</p>
+
+    <button onclick="location.href='admin-payment.html'">
+        Open Payment Panel
+    </button>
+
+</div>
+
+</div>
+
+<script src="dashboard.js"></script>
+
+</body>
+</html>

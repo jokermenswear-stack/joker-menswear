@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Joker Menswear Admin</title>
+
+    <style>
+        body{
+            font-family:Arial;
+            margin:20px;
+            background:#f5f5f5;
+        }
+
+        h1{
+            text-align:center;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+        }
+
+        th,td{
+            border:1px solid #ddd;
+            padding:10px;
+            text-align:center;
+        }
+
+        th{
+            background:#111;
+            color:white;
+        }
+
+        button{
+            padding:8px 15px;
+            cursor:pointer;
+            border:none;
+            background:green;
+            color:white;
+            border-radius:5px;
+        }
+    </style>
+</head>
+
+<body>
+<h2>Add Product</h2>
+
+<div>
+
+<input id="product_name" placeholder="Product Name">
+
+<input id="category" placeholder="Category (Shirts/TShirts/Pants)">
+
+<input id="price" placeholder="Price">
+
+<input id="image" placeholder="Image Path">
+
+<textarea id="description" placeholder="Description"></textarea>
+
+<br><br>
+
+<label>
+Status:
+<select id="status">
+    <option value="1">Show</option>
+    <option value="0">Hide</option>
+</select>
+</label>
+
+<label>
+New Arrival:
+<select id="new_arrival">
+    <option value="1">Yes</option>
+    <option value="0">No</option>
+</select>
+</label>
+
+<label>
+Offer:
+<select id="offer">
+    <option value="1">Yes</option>
+    <option value="0">No</option>
+</select>
+</label>
+
+<br><br>
+<input type="hidden" id="product_id">
+<button id="productButton" onclick="addProduct()">Add Product</button>
+
+</div>
+
+<hr>
+<h2>Bulk Product Upload</h2>
+
+<input type="file" id="excelFile" accept=".xlsx">
+
+<button onclick="uploadExcel()">Upload Excel</button>
+
+<hr>
+<h1>Joker Menswear Orders</h1>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Name</th>
+<th>Phone</th>
+<th>Address</th>
+<th>Total</th>
+<th>Payment</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="ordersTable">
+
+</tbody>
+
+</table>
+
+
+<h1>Products</h1>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Category</th>
+<th>Price</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="productsTable">
+
+</tbody>
+
+</table>
+
+
+<script src="admin.js"></script>
+
+</body>
+</html>
