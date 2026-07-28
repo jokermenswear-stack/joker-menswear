@@ -24,12 +24,13 @@ app.use("/images", express.static("images"));
     const upload = multer({ dest: "uploads/" });
 
     // MySQL connection
-    const db = mysql.createConnection({
-    host: 'localhost',
+   const db = mysql.createConnection({
+    host: 'sakura.proxy.rlwy.net',
     user: 'root',
-    password: '', // XAMPP default password is empty
-    database: 'joker_menswear'
-    });
+    password: 'erYzmKnlZSwVGsLldIdRiIPrxdiRdWkm',
+    port: 13149,
+    database: 'railway'
+});
 
     db.connect((err) => {
     if (err) {
@@ -914,6 +915,8 @@ app.put("/api/store-status/toggle", (req, res) => {
         );
     });
 });
-   server.listen(3000, () => {
-    console.log("Server running on port 3000");
+  const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
