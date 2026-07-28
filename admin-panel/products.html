@@ -236,7 +236,7 @@
 
         try {
 
-            const response = await fetch("http://localhost:3000/upload-products", {
+          const response = await fetch("https://joker-menswear-backend.onrender.com/upload-products", {
                 method: "POST",
                 body: formData
             });
@@ -279,10 +279,9 @@
 
         for (let checkbox of selected) {
 
-            await fetch(`http://localhost:3000/products/${checkbox.value}`, {
-                method: "DELETE"
-            });
-
+           await fetch(`https://joker-menswear-backend.onrender.com/products/${checkbox.value}`, {
+    method: "DELETE"
+});
         }
 
         alert("Selected products deleted successfully!");

@@ -38,7 +38,7 @@ document.getElementById("productForm").addEventListener("submit", function(e){
     };
 
 
-    fetch("http://localhost:3000/products", {
+   fetch("https://joker-menswear-backend.onrender.com/products", {
 
         method:"POST",
 

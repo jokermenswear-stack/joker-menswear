@@ -5,7 +5,7 @@ const productId = urlParams.get("id");
 
 // Load product details
 
-fetch(`http://localhost:3000/products/${productId}`)
+fetch(`https://joker-menswear-backend.onrender.com/products/${productId}`)
 
 .then(res => res.json())
 
@@ -78,7 +78,7 @@ document.getElementById("editForm").addEventListener("submit", function(e){
 
 
 
-    fetch(`http://localhost:3000/products/${productId}`, {
+   fetch(`https://joker-menswear-backend.onrender.com/products/${productId}`, {
 
 
         method:"PUT",

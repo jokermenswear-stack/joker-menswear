@@ -1,5 +1,5 @@
-const API = "http://localhost:3000";
-const socket = io("http://localhost:3000");
+const API = "https://joker-menswear-backend.onrender.com";
+const socket = io("https://joker-menswear-backend.onrender.com");
 
 if (Notification.permission !== "granted") {
     Notification.requestPermission();

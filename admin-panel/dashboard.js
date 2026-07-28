@@ -1,6 +1,6 @@
 console.log("Dashboard JS loaded");
 
-const API = "http://localhost:3000";
+const API = "https://joker-menswear-backend.onrender.com";
 
 function loadDashboard() {
 

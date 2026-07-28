@@ -1,4 +1,4 @@
-const API = "http://localhost:3000";
+const API = "https://joker-menswear-backend.onrender.com";
 
 const params = new URLSearchParams(window.location.search);
 const orderId = params.get("id");

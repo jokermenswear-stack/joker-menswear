@@ -130,7 +130,7 @@ Thank you for shopping with <strong>Joker Menswear</strong>. Please complete you
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
 
-fetch("http://localhost:3000/products")
+fetch("https://joker-menswear-backend.onrender.com/products")
 .then(res => res.json())
 .then(data => {
 
@@ -173,7 +173,7 @@ function sendWhatsApp() {
 
 
     // Save order to database
-    fetch("http://localhost:3000/api/orders", {
+   fetch("https://joker-menswear-backend.onrender.com/api/orders", {
 
         method: "POST",
 
