@@ -1,4 +1,4 @@
-fetch("http://localhost:3000/products")
+fetch("https://joker-menswear-backend.onrender.com/products")
 
 .then(res => res.json())
 
@@ -51,7 +51,7 @@ function deleteProduct(id){
     if(confirm("Delete this product?")){
 
 
-        fetch(`http://localhost:3000/products/${id}`, {
+       fetch(`https://joker-menswear-backend.onrender.com/products/${id}`, {
 
             method:"DELETE"
 
