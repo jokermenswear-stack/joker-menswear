@@ -127,6 +127,7 @@ Thank you for shopping with <strong>Joker Menswear</strong>. Please complete you
 
 <script>
 
+let product;
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
 
@@ -137,7 +138,7 @@ fetch("https://joker-menswear-backend.onrender.com/products")
     console.log("Product ID:", productId);
     console.log("API Data:", data);
 
-    const product = data.find(item => item.product_code == productId);
+  product = data.find(item => item.product_code == productId);
 
     console.log("Selected Product:", product);
 
