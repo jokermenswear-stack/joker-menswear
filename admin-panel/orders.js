@@ -1,5 +1,12 @@
 const API = "https://joker-menswear-backend.onrender.com";
 const socket = io("https://joker-menswear-backend.onrender.com");
+socket.on("connect", () => {
+    console.log("Socket connected:", socket.id);
+});
+
+socket.on("new-order", (data) => {
+    console.log("NEW ORDER RECEIVED:", data);
+});
 
 if (Notification.permission !== "granted") {
     Notification.requestPermission();
@@ -116,8 +123,10 @@ function viewOrder(id) {
     window.location.href = "order-details.html?id=" + id;
 
 }
-
 loadOrders();
+
+// Auto refresh every 3 seconds (temporary test)
+setInterval(loadOrders, 3000);
 
 let unreadCount = 0;
 
