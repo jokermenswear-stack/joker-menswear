@@ -1,5 +1,5 @@
 
-let products = {};
+var products = {};
 
 fetch("https://joker-menswear-backend.onrender.com/products")
 .then(res => res.json())
