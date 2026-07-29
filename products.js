@@ -25,9 +25,13 @@ fetch("https://joker-menswear-backend.onrender.com/products")
 
     renderProducts();
 
-})
-.catch(err => {
-    console.log("Error:", err);
+.catch(async err => {
+    console.error(err);
+
+    const res = await fetch("https://joker-menswear-backend.onrender.com/products");
+    console.log("Status:", res.status);
+    console.log("Content-Type:", res.headers.get("content-type"));
+    console.log(await res.text());
 });
 
 function renderProducts() {
