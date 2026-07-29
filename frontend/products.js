@@ -23,7 +23,9 @@ fetch("https://joker-menswear-backend.onrender.com/products")
 
     console.log(products);
 
-    renderProducts();
+   renderProducts();
+
+})
 
 .catch(async err => {
     console.error(err);
