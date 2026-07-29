@@ -183,18 +183,17 @@ function sendWhatsApp() {
             "Content-Type": "application/json"
         },
 
-        body: JSON.stringify({
-
-            customer_name: name,
-            phone: phone,
-            address: address,
-            product_name: productName,
-            size: size,
-            quantity: quantity,
-            price: price,
-            status: "Pending"
-
-        })
+      body: JSON.stringify({
+    product_id: product.id,
+    customer_name: name,
+    phone: phone,
+    address: address,
+    product_name: product.name,
+    size: size,
+    quantity: quantity,
+    price: parseFloat(product.price.replace(/[^\d.]/g, "")),
+    status: "Pending"
+})
 
     })
     .then(res => res.json())
