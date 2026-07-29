@@ -154,7 +154,8 @@ async function sendWhatsApp() {
     headers: {
         "Content-Type": "application/json"
     },
-    body: JSON.stringify({
+  body: JSON.stringify({
+    product_id: product.id,
     customer_name: name,
     phone: phone,
     address: address,   

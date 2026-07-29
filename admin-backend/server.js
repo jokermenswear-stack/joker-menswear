@@ -57,10 +57,11 @@ app.use("/images", express.static("images"));
         res.json(results);
     });
     });
-    // Save new order
-    app.post('/api/orders', (req, res) => {
+   // Save new order
+app.post('/api/orders', (req, res) => {
 
-        const {
+    const {
+        product_id,
         customer_name,
         phone,
         address,
@@ -71,15 +72,18 @@ app.use("/images", express.static("images"));
         status
     } = req.body;
 
+
     const orderSql = `
         INSERT INTO orders
         (customer_name, phone, address, total, status)
         VALUES (?, ?, ?, ?, ?)
     `;
 
-        const total = Number(price) * Number(quantity);
 
-        db.query(
+    const total = Number(price) * Number(quantity);
+
+
+    db.query(
         orderSql,
         [
             customer_name,
@@ -88,49 +92,65 @@ app.use("/images", express.static("images"));
             total,
             status || "Pending"
         ],
-            (err, result) => {
+        (err, result) => {
 
-                if (err) {
-                    console.error(err);
-                    return res.status(500).json({ error: "Failed to save order" });
-                }
-
-                const orderId = result.insertId;
-
-                const itemSql = `
-                    INSERT INTO order_items
-                    (order_id, product_name, size, quantity, price)
-                    VALUES (?, ?, ?, ?, ?)
-                `;
-
-                db.query(
-                    itemSql,
-                    [orderId, product_name, size, quantity, price],
-                    (err2) => {
-
-                        if (err2) {
-                            console.error(err2);
-                            return res.status(500).json({ error: "Failed to save order item" });
-                        }
-
-                      io.emit("new-order", {
-    orderId: orderId,
-    customer: customer_name
-});
-
-res.json({
-    success: true,
-    order_id: orderId
-});
-
-                    }
-                );
-
+            if (err) {
+                console.error(err);
+                return res.status(500).json({
+                    error: "Failed to save order"
+                });
             }
-        );
 
-    });
 
+            const orderId = result.insertId;
+
+
+            const itemSql = `
+                INSERT INTO order_items
+                (order_id, product_id, product_name, size, quantity, price)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `;
+
+
+            db.query(
+                itemSql,
+                [
+                    orderId,
+                    product_id,
+                    product_name,
+                    size,
+                    quantity,
+                    price
+                ],
+                (err2) => {
+
+                    if (err2) {
+                        console.error(err2);
+                        return res.status(500).json({
+                            error: "Failed to save order item"
+                        });
+                    }
+
+
+                    // Live notification to admin
+                    io.emit("new-order", {
+                        orderId: orderId,
+                        customer: customer_name
+                    });
+
+
+                    res.json({
+                        success: true,
+                        order_id: orderId
+                    });
+
+                }
+            );
+
+        }
+    );
+
+});
     // Get all products
     app.get('/products', (req, res) => {
 
@@ -151,23 +171,17 @@ res.json({
    // Add new product
 app.post('/products', (req, res) => {
 
-    const {
-        product_code,
-        product_name,
-        category,
-        brand,
-        price,
-        offer_price,
-        stock,
-        sizes,
-        image,
-        images,
-        video,
-        description,
-        status,
-        new_arrival,
-        offer
-    } = req.body;
+   const {
+    customer_name,
+    phone,
+    address,
+    product_id,
+    product_name,
+    size,
+    quantity,
+    price,
+    status
+} = req.body;
 
     const sql = `
         INSERT INTO products
