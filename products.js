@@ -1,7 +1,7 @@
 
 let products = {};
 
-fetch("https://joker-menswear-backend.onrender.com")
+fetch("https://joker-menswear-backend.onrender.com/products")
 .then(res => res.json())
 .then(data => {
 

@@ -157,7 +157,7 @@ async function sendWhatsApp() {
     body: JSON.stringify({
     customer_name: name,
     phone: phone,
-    address: address,
+    address: address,   
     product_name: product.name,
     size: size,
     quantity: quantity,
@@ -191,7 +191,7 @@ let message =
 🔢 Quantity: ${quantity}`;
 
     let whatsappNumber = "919047154637";
-    let url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(message);
+   let url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(message);
 
     // Enable Payment Button
     document.getElementById("paymentBtn").disabled = false;
@@ -405,8 +405,7 @@ let storeOpen = true;
 async function checkStoreStatus() {
 
     try {
-       const res = await fetch("https://joker-menswear-backend.onrender.com/api/store-status");
-        const data = await res.json();
+      const res = await fetch("https://joker-menswear-backend.onrender.com/api/store-status");        const data = await res.json();
 
         storeOpen = data.store_open == 1;
 
