@@ -134,10 +134,12 @@ console.log("ORDER API RECEIVED", req.body);
 
 
                     // Live notification to admin
-                    io.emit("new-order", {
-                        orderId: orderId,
-                        customer: customer_name
-                    });
+                 console.log("SENDING NEW ORDER:", orderId, customer_name);
+
+io.emit("new-order", {
+    orderId: orderId,
+    customer: customer_name
+});
 
 
                     res.json({
