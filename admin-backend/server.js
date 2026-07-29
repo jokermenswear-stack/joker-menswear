@@ -59,7 +59,7 @@ app.use("/images", express.static("images"));
     });
    // Save new order
 app.post('/api/orders', (req, res) => {
-    console.log("NEW ORDER API HIT");
+console.log("ORDER API RECEIVED", req.body);
 
     const {
         product_id,
