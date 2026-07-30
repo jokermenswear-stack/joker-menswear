@@ -41,8 +41,8 @@ app.use("/images", express.static("images"));
     });
 
     // Test route
-   app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "index.html"));
+ app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "frontend", "index.html"));
 });
     // Get all orders
     app.get('/api/orders', (req, res) => {
