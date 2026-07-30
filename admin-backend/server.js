@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "frontend")));
 app.use("/admin-panel", express.static(path.join(__dirname, "..", "admin-panel")));
 
-app.use("/sounds", express.static(path.join(__dirname, "..", "frontend", "sounds")));
+app.use("/sounds", express.static(path.join(__dirname, "..", "admin-panel", "sounds")));
 app.use("/images", express.static(path.join(__dirname, "..", "frontend", "images")));
 
 const upload = multer({ dest: "uploads/" });
