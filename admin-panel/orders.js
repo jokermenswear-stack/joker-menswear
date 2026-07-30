@@ -132,9 +132,8 @@ function viewOrder(id) {
 
 }
 loadOrders();
-
-// Auto refresh every 3 seconds (temporary test)
-setInterval(loadOrders, 3000);
+// Auto refresh disabled
+// setInterval(loadOrders, 3000);
 
 let unreadCount = 0;
 
