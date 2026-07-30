@@ -72,9 +72,15 @@ function loadOrders() {
 
     <td>${order.created_at}</td>
 
-    <td>
-        <button onclick="viewOrder(${order.id})">View</button>
-    </td>
+  <td>
+    <button onclick="viewOrder(${order.id})">View</button>
+
+    <button
+        onclick="deleteOrder(${order.id})"
+        style="background:red;color:white;margin-left:5px;">
+        Delete
+    </button>
+</td>
 </tr>
 `;
             });
@@ -183,3 +189,24 @@ document.getElementById("notificationBell").addEventListener("click", async () =
     count.innerText = "0";
 
 });
+
+function deleteOrder(id) {
+
+    if (!confirm("Are you sure you want to delete Order #" + id + "?")) {
+        return;
+    }
+
+    fetch(API + "/api/orders/" + id, {
+        method: "DELETE"
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        loadOrders();
+    })
+    .catch(err => {
+        console.log(err);
+        alert("Failed to delete order.");
+    });
+
+}

@@ -894,6 +894,63 @@ app.get("/api/payments/pending", (req, res) => {
     });
 });
 
+// Delete Order
+app.delete("/api/orders/:id", (req, res) => {
+
+    const orderId = req.params.id;
+
+    db.query(
+        "DELETE FROM order_items WHERE order_id = ?",
+        [orderId],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                return res.status(500).json({
+                    message: "Failed to delete order items"
+                });
+            }
+
+            db.query(
+                "DELETE FROM payments WHERE order_id = ?",
+                [orderId],
+                (err2) => {
+
+                    if (err2) {
+                        console.log(err2);
+                        return res.status(500).json({
+                            message: "Failed to delete payment"
+                        });
+                    }
+
+                    db.query(
+                        "DELETE FROM orders WHERE id = ?",
+                        [orderId],
+                        (err3) => {
+
+                            if (err3) {
+                                console.log(err3);
+                                return res.status(500).json({
+                                    message: "Failed to delete order"
+                                });
+                            }
+
+                            res.json({
+                                success: true,
+                                message: "Order deleted successfully"
+                            });
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+});
+
 // Get store status
 app.get("/api/store-status", (req, res) => {
 
