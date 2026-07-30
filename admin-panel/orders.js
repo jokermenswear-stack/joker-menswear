@@ -1,5 +1,5 @@
-const API = "https://joker-menswear-backend.onrender.com";
-const socket = io("https://joker-menswear-backend.onrender.com");
+const API = "https://joker-menswear.onrender.com";
+const socket = io("https://joker-menswear.onrender.com");
 socket.on("connect", () => {
     console.log("Socket connected:", socket.id);
 });
