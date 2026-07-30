@@ -44,13 +44,15 @@ function loadOrders() {
 
             orders.forEach(order => {
 
-                orderList.innerHTML += `
+      orderList.innerHTML += `
 <tr>
+    <td>
+        <input type="checkbox" class="orderCheck" value="${order.id}">
+    </td>
     <td>${order.id}</td>
     <td>${order.customer_name}</td>
     <td>${order.phone}</td>
     <td>₹ ${order.total}</td>
-
     <td>
     <select class="status-dropdown"
             style="background:${getStatusColor(order.status)}; color:white;"
@@ -210,3 +212,48 @@ function deleteOrder(id) {
     });
 
 }
+
+document.getElementById("selectAll").addEventListener("change", function () {
+
+    const checked = this.checked;
+
+    document.querySelectorAll(".orderCheck").forEach(box => {
+        box.checked = checked;
+    });
+
+});
+
+document.getElementById("deleteSelectedBtn").addEventListener("click", () => {
+
+    const selected = [];
+
+    document.querySelectorAll(".orderCheck:checked").forEach(box => {
+        selected.push(box.value);
+    });
+
+    if (selected.length === 0) {
+        alert("Please select at least one order.");
+        return;
+    }
+
+    if (!confirm("Delete " + selected.length + " selected order(s)?")) {
+        return;
+    }
+
+    Promise.all(
+        selected.map(id =>
+            fetch(API + "/api/orders/" + id, {
+                method: "DELETE"
+            })
+        )
+    )
+    .then(() => {
+        alert("Selected orders deleted successfully.");
+        loadOrders();
+    })
+    .catch(err => {
+        console.log(err);
+        alert("Failed to delete selected orders.");
+    });
+
+});
