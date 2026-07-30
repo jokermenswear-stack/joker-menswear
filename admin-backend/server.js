@@ -18,9 +18,10 @@ const io = new Server(server, {
 
     app.use(cors());
     app.use(express.json());
-    app.use(express.static(path.join(__dirname, "..")));
-   app.use("/sounds", express.static("sounds"));
-app.use("/images", express.static("images"));
+   app.use(express.static(path.join(__dirname, "..", "frontend")));
+
+app.use("/sounds", express.static(path.join(__dirname, "..", "frontend", "sounds")));
+app.use("/images", express.static(path.join(__dirname, "..", "frontend", "images")));
     const upload = multer({ dest: "uploads/" });
 
     // MySQL connection
