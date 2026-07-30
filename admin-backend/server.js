@@ -16,14 +16,16 @@ const io = new Server(server, {
     }
 });
 
-    app.use(cors());
-    app.use(express.json());
-   app.use(express.static(path.join(__dirname, "..", "frontend")));
+  app.use(cors());
+app.use(express.json());
+
+app.use(express.static(path.join(__dirname, "..", "frontend")));
+app.use("/admin-panel", express.static(path.join(__dirname, "..", "admin-panel")));
 
 app.use("/sounds", express.static(path.join(__dirname, "..", "frontend", "sounds")));
 app.use("/images", express.static(path.join(__dirname, "..", "frontend", "images")));
-    const upload = multer({ dest: "uploads/" });
 
+const upload = multer({ dest: "uploads/" });
     // MySQL connection
    const db = mysql.createConnection({
     host: 'sakura.proxy.rlwy.net',

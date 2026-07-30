@@ -12,7 +12,7 @@ if (Notification.permission !== "granted") {
     Notification.requestPermission();
 }
 
-const notificationSound = new Audio("sounds/notification.mp3");
+const notificationSound = new Audio("/sounds/notification.mp3");
 
 // Sound will be enabled after clicking the bell once
 let soundEnabled = false;
