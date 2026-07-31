@@ -345,25 +345,22 @@ const statusBox =
 document.getElementById("statusBox");
 
 
-
 if(order.status === "Confirmed"){
 
+    if(paymentSubmitted){
+        return;
+    }
 
-statusBox.className =
-"status confirmed";
+    statusBox.className =
+    "status confirmed";
 
+    statusBox.innerHTML =
+    "✅ Order Confirmed<br><br>Please complete your payment.";
 
-statusBox.innerHTML =
-"✅ Order Confirmed<br><br>Please complete your payment.";
-
-
-document.getElementById("paymentBox").style.display =
-"block";
-
+    document.getElementById("paymentBox").style.display =
+    "block";
 
 }
-
-
 
 else if(order.status === "Cancelled"){
 
