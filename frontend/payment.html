@@ -218,7 +218,9 @@ Address: ${address}`;
 
         let url = "https://wa.me/919047154637?text=" + encodeURIComponent(message);
 
-   window.location.href = "payment-verification.html";
+   alert("Order ID: " + data.order_id);
+
+// window.location.href = `payment-verification.html?orderId=${data.order_id}`;
 
     })
     .catch(err => {

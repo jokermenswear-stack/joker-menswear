@@ -1,411 +1,411 @@
-<!DOCTYPE html>
-<html lang="en">
+    <!DOCTYPE html>
+    <html lang="en">
 
-<head>
+    <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Admin Payment Panel</title>
+    <title>Admin Payment Panel</title>
 
-<style>
+    <style>
 
-body{
-    font-family:Arial,sans-serif;
-    background:#f4f4f4;
-    padding:20px;
-}
+    body{
+        font-family:Arial,sans-serif;
+        background:#f4f4f4;
+        padding:20px;
+    }
 
-.container{
-    max-width:650px;
-    margin:auto;
-    background:white;
-    padding:25px;
-    border-radius:10px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
+    .container{
+        max-width:650px;
+        margin:auto;
+        background:white;
+        padding:25px;
+        border-radius:10px;
+        box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    }
 
-h2,h3{
-    text-align:center;
-}
+    h2,h3{
+        text-align:center;
+    }
 
-input,button,select{
+    input,button,select{
 
-    width:100%;
-    padding:12px;
-    margin:8px 0;
-    border-radius:5px;
-    box-sizing:border-box;
-    font-size:16px;
+        width:100%;
+        padding:12px;
+        margin:8px 0;
+        border-radius:5px;
+        box-sizing:border-box;
+        font-size:16px;
 
-}
+    }
 
 
-input,select{
-    border:1px solid #ccc;
-}
+    input,select{
+        border:1px solid #ccc;
+    }
 
 
-button{
+    button{
 
-    border:none;
-    color:white;
-    cursor:pointer;
+        border:none;
+        color:white;
+        cursor:pointer;
 
-}
+    }
 
 
-.generate{
-    background:#0066cc;
-}
+    .generate{
+        background:#0066cc;
+    }
 
 
-.approve{
-    background:green;
-}
+    .approve{
+        background:green;
+    }
 
 
-.reject{
-    background:red;
-}
+    .reject{
+        background:red;
+    }
 
 
-.payment-card{
+    .payment-card{
 
-    border:1px solid #ddd;
-    padding:15px;
-    margin-top:15px;
-    border-radius:10px;
-    background:#fafafa;
+        border:1px solid #ddd;
+        padding:15px;
+        margin-top:15px;
+        border-radius:10px;
+        background:#fafafa;
 
-}
+    }
 
 
-#generatedCode{
+    #generatedCode{
 
-    text-align:center;
-    color:green;
-    font-weight:bold;
+        text-align:center;
+        color:green;
+        font-weight:bold;
 
-}
+    }
 
 
-.empty{
+    .empty{
 
-    text-align:center;
-    color:#777;
+        text-align:center;
+        color:#777;
 
-}
+    }
 
-</style>
+    </style>
 
-</head>
+    </head>
 
 
-<body>
+    <body>
 
 
-<div class="container">
+    <div class="container">
 
 
-<h2>Admin Payment Panel</h2>
+    <h2>Admin Payment Panel</h2>
 
 
 
-<h3>Generate Payment Code</h3>
+    <h3>Generate Payment Code</h3>
 
 
-<input 
-type="number"
-id="orderId"
-placeholder="Enter Order ID">
+    <input 
+    type="number"
+    id="orderId"
+    placeholder="Enter Order ID">
 
 
-<button class="generate" onclick="generatePaymentCode()">
+    <button class="generate" onclick="generatePaymentCode()">
 
-Generate Payment Code
+    Generate Payment Code
 
-</button>
+    </button>
 
 
-<p id="generatedCode"></p>
+    <p id="generatedCode"></p>
 
 
 
-<hr>
+    <hr>
 
 
 
-<h3>Pending Payment Verification</h3>
+    <h3>Pending Payment Verification</h3>
 
 
-<div id="paymentList">
+    <div id="paymentList">
 
-<p class="empty">
-Loading...
-</p>
+    <p class="empty">
+    Loading...
+    </p>
 
-</div>
+    </div>
 
 
 
-</div>
+    </div>
 
 
 
 
 
-<script>
+    <script>
 
 
-const API="https://joker-menswear-backend.onrender.com";
+    const API="https://joker-menswear-backend.onrender.com";
 
 
 
-// Generate code
+    // Generate code
 
-async function generatePaymentCode(){
+    async function generatePaymentCode(){
 
 
-let orderId=document.getElementById("orderId").value;
+    let orderId=document.getElementById("orderId").value;
 
 
-if(orderId===""){
+    if(orderId===""){
 
-alert("Enter Order ID");
+    alert("Enter Order ID");
 
-return;
+    return;
 
-}
+    }
 
 
 
-let response=await fetch(
-API+"/api/payment/generate-code",
-{
+    let response=await fetch(
+    API+"/api/payment/generate-code",
+    {
 
-method:"POST",
+    method:"POST",
 
-headers:{
-"Content-Type":"application/json"
-},
+    headers:{
+    "Content-Type":"application/json"
+    },
 
-body:JSON.stringify({
+    body:JSON.stringify({
 
-order_id:orderId
+    order_id:orderId
 
-})
+    })
 
-});
+    });
 
 
 
-let data=await response.json();
+    let data=await response.json();
 
 
 
-if(data.success){
+    if(data.success){
 
 
-document.getElementById("generatedCode").innerText=
-"Code: "+data.code;
+    document.getElementById("generatedCode").innerText=
+    "Code: "+data.code;
 
 
-alert("Payment Code Generated: "+data.code);
+    alert("Payment Code Generated: "+data.code);
 
 
-}
+    }
 
-else{
+    else{
 
 
-alert(data.message);
+    alert(data.message);
 
-}
+    }
 
 
-}
+    }
 
 
 
 
 
 
-// Load pending payments
+    // Load pending payments
 
 
-function loadPayments(){
+    function loadPayments(){
 
 
 
-fetch(API+"/api/payments/pending")
+    fetch(API+"/api/payments/pending")
 
 
-.then(res=>res.json())
+    .then(res=>res.json())
 
 
-.then(data=>{
+    .then(data=>{
 
 
 
-let list=document.getElementById("paymentList");
+    let list=document.getElementById("paymentList");
 
 
-list.innerHTML="";
+    list.innerHTML="";
 
 
 
-if(data.payments.length===0){
+    if(data.payments.length===0){
 
 
-list.innerHTML=
-`
-<p class="empty">
-No pending payments
-</p>
-`;
+    list.innerHTML=
+    `
+    <p class="empty">
+    No pending payments
+    </p>
+    `;
 
-return;
+    return;
 
-}
+    }
 
 
 
 
-data.payments.forEach(payment=>{
+    data.payments.forEach(payment=>{
 
 
-let card=document.createElement("div");
+    let card=document.createElement("div");
 
 
-card.className="payment-card";
+    card.className="payment-card";
 
 
 
-card.innerHTML=
+    card.innerHTML=
 
-`
+    `
 
-<h3>
-Order ID: ${payment.order_id}
-</h3>
+    <h3>
+    Order ID: ${payment.order_id}
+    </h3>
 
 
-<p>
-<strong>Customer:</strong>
-${payment.customer_name}
-</p>
+    <p>
+    <strong>Customer:</strong>
+    ${payment.customer_name}
+    </p>
 
 
-<p>
-<strong>Amount:</strong>
-₹${payment.total}
-</p>
+    <p>
+    <strong>Amount:</strong>
+    ₹${payment.total}
+    </p>
 
 
-<p>
-<strong>Transaction ID:</strong>
-${payment.transaction_id}
-</p>
+    <p>
+    <strong>Transaction ID:</strong>
+    ${payment.transaction_id}
+    </p>
 
 
-<select id="reason${payment.order_id}">
+    <select id="reason${payment.order_id}">
 
-<option value="">
-Select rejection reason
-</option>
+    <option value="">
+    Select rejection reason
+    </option>
 
-<option>
-Wrong UTR number
-</option>
+    <option>
+    Wrong UTR number
+    </option>
 
-<option>
-Payment not received
-</option>
+    <option>
+    Payment not received
+    </option>
 
-<option>
-Amount mismatch
-</option>
+    <option>
+    Amount mismatch
+    </option>
 
-<option>
-Less payment received
-</option>
+    <option>
+    Less payment received
+    </option>
 
-</select>
+    </select>
 
 
 
-<button class="approve"
-onclick="approvePayment(${payment.order_id})">
+    <button class="approve"
+    onclick="approvePayment(${payment.order_id})">
 
-Approve Payment
+    Approve Payment
 
-</button>
+    </button>
 
 
 
-<button class="reject"
-onclick="rejectPayment(${payment.order_id})">
+    <button class="reject"
+    onclick="rejectPayment(${payment.order_id})">
 
-Reject Payment
+    Reject Payment
 
-</button>
+    </button>
 
 
-`;
+    `;
 
 
 
-list.appendChild(card);
+    list.appendChild(card);
 
 
-});
+    });
 
 
-});
+    });
 
 
-}
+    }
 
 
 
 
 
 
-// Approve
+    // Approve
 
 
-function approvePayment(orderId){
+    function approvePayment(orderId){
 
 
 
-fetch(API+"/api/payment/approve/"+orderId,{
+    fetch(API+"/api/payment/approve/"+orderId,{
 
-method:"PUT"
+    method:"PUT"
 
-})
+    })
 
-.then(res=>res.json())
+    .then(res=>res.json())
 
-.then(data=>{
+    .then(data=>{
 
 
-if(data.success){
+    if(data.success){
 
 
-alert("Payment Approved");
+    alert("Payment Approved");
 
 
-loadPayments();
+    loadPayments();
 
 
-}
+    }
 
 
-});
+    });
 
 
-}
+    }
 
 
 
@@ -413,90 +413,90 @@ loadPayments();
 
 
 
-// Reject
+    // Reject
 
 
-function rejectPayment(orderId){
+    function rejectPayment(orderId){
 
 
 
-let reason=document.getElementById(
-"reason"+orderId
-).value;
+    let reason=document.getElementById(
+    "reason"+orderId
+    ).value;
 
 
 
-if(reason===""){
+    if(reason===""){
 
 
-alert("Select rejection reason");
+    alert("Select rejection reason");
 
-return;
+    return;
 
-}
+    }
 
 
 
-fetch(API+"/api/payment/reject",{
+    fetch(API+"/api/payment/reject",{
 
-method:"PUT",
+    method:"PUT",
 
-headers:{
+    headers:{
 
-"Content-Type":"application/json"
+    "Content-Type":"application/json"
 
-},
+    },
 
-body:JSON.stringify({
+    body:JSON.stringify({
 
-order_id:orderId,
+    order_id:orderId,
 
-remarks:reason
+    remarks:reason
 
-})
+    })
 
 
-})
+    })
 
 
-.then(res=>res.json())
+    .then(res=>res.json())
 
 
-.then(data=>{
+    .then(data=>{
 
 
-if(data.success){
+    if(data.success){
 
 
-alert("Payment Rejected");
+    alert("Payment Rejected");
 
 
-loadPayments();
+    loadPayments();
 
 
-}
+    }
 
 
-});
+    });
 
 
-}
+    }
 
 
 
 
 
 
-loadPayments();
+    loadPayments();
 
 
-setInterval(loadPayments,5000);
+    setInterval(loadPayments,5000);
 
 
 
-</script>
+    </script>
 
 
-</body>
+    </body>
 
-</html>
+    </html>
