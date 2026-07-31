@@ -364,18 +364,15 @@ if(order.status === "Confirmed"){
 
 else if(order.status === "Cancelled"){
 
-
 statusBox.className =
 "status rejected";
 
-
 statusBox.innerHTML =
-"❌ Order Rejected<br><br>Please contact Joker Menswear.";
-
+"❌ Order Rejected<br><br><b>Reason:</b><br>" +
+(order.rejection_reason || "No reason provided") +
+"<br><br>Please contact Joker Menswear.";
 
 }
-
-
 
 else{
 
