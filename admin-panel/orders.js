@@ -85,18 +85,17 @@ function loadOrders() {
     order.status === "Pending"
     ?
     `
-    <button
-    onclick="acceptOrder(${order.id})"
-    style="background:green;margin-left:5px;">
-    Accept
-    </button>
+   <button
+onclick="acceptOrder(${order.id}, this)"
+style="background:green;margin-left:5px;">
+Accept
+</button>
 
-
-    <button
-    onclick="rejectOrder(${order.id})"
-    style="background:red;margin-left:5px;">
-    Reject
-    </button>
+<button
+onclick="rejectOrder(${order.id}, this)"
+style="background:red;margin-left:5px;">
+Reject
+</button>
     `
     :
     ""
@@ -284,12 +283,14 @@ document.getElementById("deleteSelectedBtn").addEventListener("click", () => {
 
 });
 
-function acceptOrder(id) {
+function acceptOrder(id, btn) {
+
+    btn.disabled = true;
 
     if (!confirm("Accept this order?")) {
+        btn.disabled = false;
         return;
     }
-
 
     fetch(API + "/api/orders/accept/" + id, {
 
@@ -303,7 +304,55 @@ function acceptOrder(id) {
 
     .then(res => res.json())
 
-    .then(data => {
+  .then(data => {
+
+    alert(data.message);
+
+    loadOrders();
+
+})
+
+.catch(err => {
+
+    btn.disabled = false;
+
+    console.log("Accept Error:", err);
+
+    alert("Failed to accept order");
+
+});
+
+}
+
+
+function rejectOrder(id, btn) {
+
+    btn.disabled = true;
+
+    const reason = prompt("Enter rejection reason:");
+
+    if(!reason){
+        btn.disabled = false;
+        return;
+    }
+
+    fetch(API + "/api/orders/reject/" + id, {
+
+        method:"PUT",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            reason:reason
+        })
+
+    })
+
+    .then(res=>res.json())
+
+    .then(data=>{
 
         alert(data.message);
 
@@ -311,26 +360,17 @@ function acceptOrder(id) {
 
     })
 
-    .catch(err => {
+    .catch(err=>{
 
-        console.log("Accept Error:", err);
+        btn.disabled = false;
 
-        alert("Failed to accept order");
+        console.log("Reject Error:",err);
+
+        alert("Failed to reject order");
 
     });
 
 }
-
-
-
-function rejectOrder(id) {
-
-    const reason = prompt("Enter rejection reason:");
-
-    if(!reason){
-        return;
-    }
-
 
     fetch(API + "/api/orders/reject/" + id, {
 
