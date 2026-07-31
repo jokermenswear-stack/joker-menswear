@@ -511,25 +511,22 @@ document.getElementById("statusBox").innerHTML =
 
 if(data.payment_status==="Rejected"){
 
+paymentSubmitted = false;
 
 document.getElementById("statusBox").className =
 "status rejected";
 
-
 document.getElementById("statusBox").innerHTML =
 
-"❌ Payment Rejected<br><br>" + data.remarks;
-
-
+"❌ Payment Rejected<br><br><b>Reason:</b><br>" +
+data.remarks +
+"<br><br>Please correct the payment details and submit again.";
 
 document.getElementById("paymentBox").style.display =
 "block";
 
-
 }
-
-
-
+    
 });
 
 
@@ -544,16 +541,11 @@ loadOrder();
 
 setInterval(()=>{
 
-checkOrderStatus();
+    checkOrderStatus();
 
-if(paymentSubmitted){
-
-checkPaymentStatus();
-
-}
+    checkPaymentStatus();
 
 },3000);
-
 
 
 </script>
