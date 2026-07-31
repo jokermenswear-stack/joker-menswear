@@ -6,27 +6,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Payment Verification - Joker Menswear</title>
+<title>Order Status - Joker Menswear</title>
 
 <style>
 
 body{
+    margin:0;
     font-family:Arial,sans-serif;
-    background:#f4f4f4;
+    background:#f5f5f5;
     display:flex;
     justify-content:center;
     align-items:center;
     min-height:100vh;
-    margin:0;
 }
 
 .container{
+
     background:white;
-    padding:25px;
-    border-radius:10px;
     width:90%;
-    max-width:400px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    max-width:450px;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.1);
+
 }
 
 
@@ -35,29 +37,48 @@ h2{
 }
 
 
-input,button{
+.order-box{
 
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border-radius:5px;
-    box-sizing:border-box;
-    font-size:16px;
+    background:#fafafa;
+    padding:15px;
+    border-radius:10px;
+    margin-top:15px;
 
 }
 
 
-input{
-    border:1px solid #ccc;
+.status{
+
+    text-align:center;
+    padding:20px;
+    margin-top:20px;
+    border-radius:10px;
+    font-size:18px;
+    font-weight:bold;
+
 }
 
 
-button{
+.waiting{
 
-    background:#000;
-    color:white;
-    border:none;
-    cursor:pointer;
+    background:#fff3cd;
+    color:#856404;
+
+}
+
+
+.confirmed{
+
+    background:#d4edda;
+    color:#155724;
+
+}
+
+
+.rejected{
+
+    background:#f8d7da;
+    color:#721c24;
 
 }
 
@@ -68,63 +89,75 @@ button{
     margin-top:20px;
     padding:15px;
     border:1px solid #ddd;
-    border-radius:8px;
+    border-radius:10px;
+
+}
+
+
+input,button{
+
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    box-sizing:border-box;
+    border-radius:6px;
+    font-size:16px;
+
+}
+
+
+input{
+
+    border:1px solid #ccc;
+
+}
+
+
+button{
+
+    background:#111;
+    color:white;
+    border:none;
+    cursor:pointer;
+
+}
+
+
+button:hover{
+
+    background:#333;
+
+}
+
+
+.qr{
+
+    text-align:center;
+
+}
+
+
+.qr img{
+
+    width:220px;
+    height:220px;
+    object-fit:contain;
+    border:1px solid #ddd;
+    border-radius:10px;
 
 }
 
 
 .success{
+
     color:green;
-    font-weight:bold;
-    text-align:center;
+
 }
 
 
 .error{
+
     color:red;
-    font-weight:bold;
-    text-align:center;
-}
-
-
-#statusBox{
-
-    display:none;
-    text-align:center;
-    margin-top:15px;
-
-}
-
-
-#loader{
-
-    display:none;
-
-}
-
-
-.spinner{
-
-    border:4px solid #eee;
-    border-top:4px solid black;
-    border-radius:50%;
-    width:35px;
-    height:35px;
-    animation:spin 1s linear infinite;
-    margin:15px auto;
-
-}
-
-
-@keyframes spin{
-
-0%{
-transform:rotate(0deg);
-}
-
-100%{
-transform:rotate(360deg);
-}
 
 }
 
@@ -140,31 +173,17 @@ transform:rotate(360deg);
 <div class="container">
 
 
-<h2>Payment Verification</h2>
+<h2>🛒 Joker Menswear</h2>
 
 
-<input 
-type="text"
-id="verificationCode"
-placeholder="Enter Verification Code">
-
-
-<button onclick="verifyCode()">
-Verify Code
-</button>
-
-
-
-<p id="message"></p>
-
-
-
-
-
-<div class="payment-box" id="paymentBox">
-
+<div class="order-box">
 
 <h3>Order Details</h3>
+
+<p>
+<strong>Order ID:</strong>
+<span id="orderId"></span>
+</p>
 
 
 <p>
@@ -174,188 +193,217 @@ Verify Code
 
 
 <p>
-<strong>Amount:</strong>
-₹<span id="orderAmount"></span>
+<strong>Product:</strong>
+<span id="productName"></span>
 </p>
 
 
+<p>
+<strong>Total:</strong>
+₹<span id="total"></span>
+</p>
 
-<h3>Pay via UPI</h3>
-
-
-<div style="text-align:center;">
-
-<img 
-src="../images/upi-qr.png"
-alt="UPI QR Code"
-style="
-width:220px;
-height:220px;
-border:1px solid #ccc;
-border-radius:10px;
-object-fit:contain;
-"
-onerror="this.style.display='none'; alert('QR image not found');">
 
 </div>
 
 
 
+<div id="statusBox" class="status waiting">
+
+🟡 Order Received<br><br>
+
+Please wait while we verify product and size availability.<br>
+
+Do not close this page.
+
+</div>
+
+
+
+<div id="paymentBox" class="payment-box">
+
+
+<h3>✅ Order Confirmed</h3>
+
+
 <p>
-<strong>UPI ID:</strong>
+Your order is available. Please complete payment.
+</p>
+
+
+<div class="qr">
+
+<img src="images/upi-qr.png">
+
+</div>
+
+
+<p>
+<strong>UPI ID:</strong><br>
 vyapar.172141824482@hdfcbank
 </p>
 
 
-<p>
-<strong>Amount:</strong>
-₹<span id="payAmount"></span>
-</p>
-
-
-
-<input
+<input 
 type="text"
 id="transactionId"
 placeholder="Enter UTR / Transaction ID">
 
 
-
 <button onclick="submitPayment()">
 
-Submit Transaction ID
+Submit Payment
 
 </button>
 
 
-
 </div>
 
 
-
-
-
-
-<div id="statusBox">
-
-
-<div id="loader">
-
-<div class="spinner"></div>
-
 </div>
-
-
-<p id="statusMessage"></p>
-
-
-</div>
-
-
-
-
-</div>
-
-
-
-
-
 
 <script>
 
+const API = "https://joker-menswear.onrender.com";
 
-let currentOrderId = null;
+const params = new URLSearchParams(window.location.search);
 
-let paymentCheckInterval = null;
+const orderId = params.get("orderId");
 
+let currentOrderId = orderId;
 
-
-
-
-async function verifyCode(){
-
-
-const code =
-document.getElementById("verificationCode").value;
+let paymentSubmitted = false;
 
 
 
-const response = await fetch(
+// Load Order Details
 
-"https://joker-menswear-backend.onrender.com/api/payment/verify-code",
-
-{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-verification_code:code
-
-})
-
-});
+function loadOrder(){
 
 
-const data = await response.json();
+fetch(API + "/api/orders/" + orderId)
+
+.then(res => res.json())
+
+.then(data => {
 
 
+console.log("Order Details:", data);
 
 
-if(data.success){
-
-
-document.getElementById("message").innerHTML =
-"<span class='success'>Code verified successfully!</span>";
-
-
-
-currentOrderId = data.payment.order_id;
-
+document.getElementById("orderId").innerText =
+data.order.id;
 
 
 document.getElementById("customerName").innerText =
-data.payment.customer_name;
+data.order.customer_name;
+
+
+document.getElementById("total").innerText =
+data.order.total;
+
+
+if(data.items.length > 0){
+
+document.getElementById("productName").innerText =
+data.items[0].product_name;
+
+}
+
+
+checkOrderStatus();
+
+
+})
+
+.catch(err=>{
+
+console.log(err);
+
+});
+
+}
 
 
 
-document.getElementById("orderAmount").innerText =
-data.payment.total;
+// Check Order Status
+
+function checkOrderStatus(){
+
+
+fetch(API + "/api/orders/" + orderId)
+
+.then(res=>res.json())
+
+.then(data=>{
+
+
+const order = data.order;
+
+
+const statusBox =
+document.getElementById("statusBox");
 
 
 
-document.getElementById("payAmount").innerText =
-data.payment.total;
+if(order.status === "Confirmed"){
 
 
+statusBox.className =
+"status confirmed";
 
-document.getElementById("paymentBox").style.display="block";
+
+statusBox.innerHTML =
+"✅ Order Confirmed<br><br>Please complete your payment.";
+
+
+document.getElementById("paymentBox").style.display =
+"block";
 
 
 }
+
+
+
+else if(order.status === "Cancelled"){
+
+
+statusBox.className =
+"status rejected";
+
+
+statusBox.innerHTML =
+"❌ Order Rejected<br><br>Please contact Joker Menswear.";
+
+
+}
+
+
 
 else{
 
 
-document.getElementById("message").innerHTML =
-"<span class='error'>Invalid verification code!</span>";
+statusBox.className =
+"status waiting";
+
+
+statusBox.innerHTML =
+"🟡 Order Received<br><br>Please wait while we verify product and size availability.<br><br>Do not close this page.";
+
 
 }
 
 
+
+});
+
 }
 
 
 
+// Submit Payment
 
-
-
-
-async function submitPayment(){
+function submitPayment(){
 
 
 const transactionId =
@@ -363,9 +411,9 @@ document.getElementById("transactionId").value;
 
 
 
-if(transactionId===""){
+if(transactionId.trim()===""){
 
-alert("Enter Transaction ID");
+alert("Please enter UTR / Transaction ID");
 
 return;
 
@@ -373,10 +421,7 @@ return;
 
 
 
-
-const response = await fetch(
-
-"https://joker-menswear-backend.onrender.com/api/payment/submit",
+fetch(API + "/api/payment/submit",
 
 {
 
@@ -398,36 +443,30 @@ payment_method:"UPI"
 
 })
 
-});
+})
 
+.then(res=>res.json())
 
-const data = await response.json();
-
-
+.then(data=>{
 
 
 if(data.success){
 
 
-document.getElementById("message").innerHTML =
-"<span class='success'>Transaction submitted. Waiting for admin verification.</span>";
+paymentSubmitted = true;
 
 
-
-document.getElementById("paymentBox").style.display="none";
-
-
-
-document.getElementById("statusBox").style.display="block";
+document.getElementById("paymentBox").style.display =
+"none";
 
 
+document.getElementById("statusBox").className =
+"status waiting";
 
-checkPaymentStatus();
 
+document.getElementById("statusBox").innerHTML =
 
-
-paymentCheckInterval =
-setInterval(checkPaymentStatus,3000);
+"🟡 Payment Submitted<br><br>Please wait while we verify your payment.";
 
 
 
@@ -436,113 +475,90 @@ setInterval(checkPaymentStatus,3000);
 else{
 
 
-document.getElementById("message").innerHTML =
-"<span class='error'>Payment submission failed.</span>";
+alert("Payment submission failed");
 
 }
 
 
-}
-
-
-
-
-
-
-
-
-async function checkPaymentStatus(){
-
-
-
-if(!currentOrderId){
-
-return;
-
-}
-
-
-
-
-const response = await fetch(
-
-`https://joker-menswear-backend.onrender.com/api/payment/status/${currentOrderId}`
-
-);
-
-
-
-const data = await response.json();
-
-
-
-
-if(!data.success){
-
-return;
-
-}
-
-
-
-
-if(data.payment_status==="Pending"){
-
-
-document.getElementById("loader").style.display="block";
-
-
-document.getElementById("statusMessage").innerHTML =
-"Waiting for admin payment verification...";
+});
 
 
 }
 
 
 
-else if(data.payment_status==="Paid"){
+// Check payment status
+
+function checkPaymentStatus(){
+
+
+fetch(API + "/api/payment/status/" + orderId)
+
+.then(res=>res.json())
+
+.then(data=>{
+
+
+if(data.payment_status==="Paid"){
+
+
+document.getElementById("statusBox").className =
+"status confirmed";
+
+
+document.getElementById("statusBox").innerHTML =
+
+"✅ Payment Verified<br><br>Your order has been confirmed.<br><br>We will begin packing your order shortly.";
+
+
+}
 
 
 
-document.getElementById("loader").style.display="none";
+if(data.payment_status==="Rejected"){
 
 
-document.getElementById("statusMessage").innerHTML =
-
-"<span class='success'>Payment verified successfully. Your order is confirmed.</span>";
-
+document.getElementById("statusBox").className =
+"status rejected";
 
 
-clearInterval(paymentCheckInterval);
+document.getElementById("statusBox").innerHTML =
+
+"❌ Payment Rejected<br><br>" + data.remarks;
+
+
+
+document.getElementById("paymentBox").style.display =
+"block";
 
 
 }
 
 
 
-
-else if(data.payment_status==="Rejected"){
-
-
-
-document.getElementById("loader").style.display="none";
-
-
-document.getElementById("statusMessage").innerHTML =
-
-"<span class='error'>Payment rejected: "
-+ data.remarks +
-"</span>";
-
-
-
-clearInterval(paymentCheckInterval);
+});
 
 
 }
 
 
+
+loadOrder();
+
+
+// Auto check every 3 seconds
+
+setInterval(()=>{
+
+checkOrderStatus();
+
+if(paymentSubmitted){
+
+checkPaymentStatus();
+
 }
+
+},3000);
 
 
 

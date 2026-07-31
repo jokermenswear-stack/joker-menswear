@@ -75,13 +75,40 @@ function loadOrders() {
     <td>${order.created_at}</td>
 
   <td>
-    <button onclick="viewOrder(${order.id})">View</button>
+
+    <button onclick="viewOrder(${order.id})">
+        View
+    </button>
+
+
+    ${
+    order.status === "Pending"
+    ?
+    `
+    <button
+    onclick="acceptOrder(${order.id})"
+    style="background:green;margin-left:5px;">
+    Accept
+    </button>
+
+
+    <button
+    onclick="rejectOrder(${order.id})"
+    style="background:red;margin-left:5px;">
+    Reject
+    </button>
+    `
+    :
+    ""
+    }   
+
 
     <button
         onclick="deleteOrder(${order.id})"
         style="background:red;color:white;margin-left:5px;">
         Delete
     </button>
+
 </td>
 </tr>
 `;
@@ -256,3 +283,85 @@ document.getElementById("deleteSelectedBtn").addEventListener("click", () => {
     });
 
 });
+
+function acceptOrder(id) {
+
+    if (!confirm("Accept this order?")) {
+        return;
+    }
+
+
+    fetch(API + "/api/orders/accept/" + id, {
+
+        method: "PUT",
+
+        headers:{
+            "Content-Type":"application/json"
+        }
+
+    })
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        alert(data.message);
+
+        loadOrders();
+
+    })
+
+    .catch(err => {
+
+        console.log("Accept Error:", err);
+
+        alert("Failed to accept order");
+
+    });
+
+}
+
+
+
+function rejectOrder(id) {
+
+    const reason = prompt("Enter rejection reason:");
+
+    if(!reason){
+        return;
+    }
+
+
+    fetch(API + "/api/orders/reject/" + id, {
+
+        method:"PUT",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            reason:reason
+        })
+
+    })
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        alert(data.message);
+
+        loadOrders();
+
+    })
+
+    .catch(err=>{
+
+        console.log("Reject Error:",err);
+
+        alert("Failed to reject order");
+
+    });
+
+}

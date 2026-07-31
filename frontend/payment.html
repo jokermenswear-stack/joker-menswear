@@ -52,17 +52,19 @@ Thank you for shopping with <strong>Joker Menswear</strong>. Please complete you
     <ol>
         <li>Fill in your delivery details.</li>
 
-        <li>Click <strong>Submit Order</strong> to send your order request.</li>
+        <li>Click <strong>Place Order</strong>.</li>
 
-        <li>Wait for confirmation from <strong>Joker Menswear</strong> regarding product availability.</li>
+        <li>Please wait while we verify your product and size availability.</li>
 
-        <li>Receive your <strong>Payment Verification Code</strong> from us.</li>
+        <li>Once your order is confirmed, the payment section will automatically appear.</li>
 
-        <li>Enter the verification code and click <strong>View Payment Details</strong>.</li>
+        <li>Pay using the QR Code or UPI ID shown on the page.</li>
 
-        <li>Complete the payment using the QR Code or UPI ID.</li>
+        <li>Enter your UTR / Transaction ID and submit it.</li>
 
-        <li>Your order will be processed after successful payment verification.</li>
+        <li>Wait while we verify your payment.</li>
+
+        <li>Your order status will update automatically.</li>
 
     </ol>
 
@@ -118,9 +120,8 @@ Thank you for shopping with <strong>Joker Menswear</strong>. Please complete you
 <br>
 
 <button type="button" onclick="sendWhatsApp()">
-    Submit Order
+    Place Order
 </button>
-
 </form>
 </div>
     
@@ -198,31 +199,14 @@ product_name: product.product_name,
 
     })
     .then(res => res.json())
-    .then(data => {
+   .then(data => {
 
-        console.log("Order Saved:", data);
+    console.log("Order Saved:", data);
 
+   window.location.href =
+`./payment-verification.html?orderId=${data.order_id}`;
 
-        // Open WhatsApp
-        let message =
-`New Order - Joker Menswear
-
-Product: ${productName}
-Price: ${priceText}
-Size: ${size}
-Quantity: ${quantity}
-
-Customer Name: ${name}
-Mobile: ${phone}
-Address: ${address}`;
-
-        let url = "https://wa.me/919047154637?text=" + encodeURIComponent(message);
-
-   alert("Order ID: " + data.order_id);
-
-// window.location.href = `payment-verification.html?orderId=${data.order_id}`;
-
-    })
+})
     .catch(err => {
         console.log("Order Error:", err);
     });
