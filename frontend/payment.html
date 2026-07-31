@@ -203,8 +203,10 @@ product_name: product.product_name,
 
     console.log("Order Saved:", data);
 
-   window.location.href =
-`./payment-verification.html?orderId=${data.order_id}`;
+    alert("Redirecting to payment verification...");
+
+    window.location.href =
+    "./payment-verification.html?orderId=" + data.order_id;
 
 })
     .catch(err => {
