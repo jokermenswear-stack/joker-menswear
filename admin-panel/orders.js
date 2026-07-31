@@ -372,36 +372,4 @@ function rejectOrder(id, btn) {
 
 }
 
-    fetch(API + "/api/orders/reject/" + id, {
-
-        method:"PUT",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-            reason:reason
-        })
-
-    })
-
-    .then(res=>res.json())
-
-    .then(data=>{
-
-        alert(data.message);
-
-        loadOrders();
-
-    })
-
-    .catch(err=>{
-
-        console.log("Reject Error:",err);
-
-        alert("Failed to reject order");
-
-    });
-
-}
+ 
