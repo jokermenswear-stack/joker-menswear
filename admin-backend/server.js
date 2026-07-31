@@ -582,6 +582,106 @@ app.post('/upload-products', upload.single('file'), (req, res) => {
     });
 });
 
+// Admin Accept Order - Create Payment Waiting
+app.put("/api/orders/accept/:id", (req, res) => {
+
+    const orderId = req.params.id;
+
+    // Create payment entry if not already exists
+    const checkSql = `
+        SELECT * FROM payments 
+        WHERE order_id = ?
+    `;
+
+    db.query(checkSql, [orderId], (err, result) => {
+
+        if (err) {
+            console.log(err);
+            return res.status(500).json({
+                success:false,
+                message:"Database error"
+            });
+        }
+
+
+        if(result.length === 0){
+
+            const insertSql = `
+                INSERT INTO payments
+                (order_id, payment_status)
+                VALUES (?, 'Pending')
+            `;
+
+
+            db.query(insertSql, [orderId], (err2)=>{
+
+                if(err2){
+                    console.log(err2);
+                    return res.status(500).json({
+                        success:false,
+                        message:"Payment creation failed"
+                    });
+                }
+
+
+                updateOrder();
+
+            });
+
+
+        } else {
+
+            updateOrder();
+
+        }
+
+
+
+        function updateOrder(){
+
+            const sql = `
+                UPDATE orders
+                SET status='Confirmed',
+                    order_status='Confirmed'
+                WHERE id=?
+            `;
+
+
+            db.query(sql,[orderId],(err3)=>{
+
+                if(err3){
+                    console.log(err3);
+
+                    return res.status(500).json({
+                        success:false,
+                        message:"Order update failed"
+                    });
+                }
+
+
+                // Notify customer page instantly
+                io.emit("order-status-update",{
+                    orderId:orderId,
+                    status:"Confirmed"
+                });
+
+
+                res.json({
+                    success:true,
+                    message:"Order accepted"
+                });
+
+            });
+
+        }
+
+
+    });
+
+
+});
+
+
   // Generate Payment Verification Code
 app.post("/api/payment/generate-code", (req, res) => {
 
