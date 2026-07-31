@@ -681,6 +681,45 @@ app.put("/api/orders/accept/:id", (req, res) => {
 
 });
 
+// Admin Reject Order
+app.put("/api/orders/reject/:id", (req, res) => {
+
+    const orderId = req.params.id;
+    const { reason } = req.body;
+
+    const sql = `
+        UPDATE orders
+        SET status = 'Cancelled',
+            order_status = 'Cancelled',
+            rejection_reason = ?
+        WHERE id = ?
+    `;
+
+    db.query(sql, [reason, orderId], (err) => {
+
+        if (err) {
+            console.log(err);
+
+            return res.status(500).json({
+                success: false,
+                message: "Failed to reject order"
+            });
+        }
+
+        io.emit("order-status-update", {
+            orderId: orderId,
+            status: "Cancelled",
+            reason: reason
+        });
+
+        res.json({
+            success: true,
+            message: "Order rejected successfully"
+        });
+
+    });
+
+});
 
   // Generate Payment Verification Code
 app.post("/api/payment/generate-code", (req, res) => {
