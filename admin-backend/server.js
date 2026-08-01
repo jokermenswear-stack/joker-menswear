@@ -507,25 +507,6 @@ app.get("/api/orders/:id", (req, res) => {
 app.put("/api/orders/:id/status", (req, res) => {
 
     const id = req.params.id;
-    const { status } = req.body;
-
-    // First get current order status
-    db.query("SELECT status FROM orders WHERE id = ?", [id], (err, orderResult) => {
-
-        if (err || orderResult.length === 0) {
-            return res.status(500).json({
-                success: false,
-                message: "Order not found"
-            });
-        }
-
-        const currentStatus = orderResult[0].status;
-
-        // Update Order Status
-
-app.put("/api/orders/:id/status", (req, res) => {
-
-    const id = req.params.id;
     const { order_status } = req.body;
 
 
@@ -558,55 +539,63 @@ app.put("/api/orders/:id/status", (req, res) => {
                     }
 
 
+                    // Reduce stock only when changing to Shipped first time
                     if (order_status === "Shipped" && currentStatus !== "Shipped") {
 
-                        const itemSql =
-                        "SELECT product_name, quantity FROM order_items WHERE order_id = ?";
+
+                        const itemSql = `
+                            SELECT product_name, quantity
+                            FROM order_items
+                            WHERE order_id = ?
+                        `;
 
 
-                        db.query(itemSql, [id], (err3, items) => {
+                        db.query(
+                            itemSql,
+                            [id],
+                            (err3, items) => {
 
-                            if (err3) {
-                                return res.status(500).json({
-                                    success:false,
-                                    message:"Failed to get order items"
+                                if (err3) {
+                                    return res.status(500).json({
+                                        success: false,
+                                        message: "Failed to get order items"
+                                    });
+                                }
+
+
+                                items.forEach(item => {
+
+                                    db.query(
+                                        `
+                                        UPDATE products
+                                        SET stock = stock - ?
+                                        WHERE product_name = ?
+                                        AND stock >= ?
+                                        `,
+                                        [
+                                            item.quantity,
+                                            item.product_name,
+                                            item.quantity
+                                        ]
+                                    );
+
                                 });
+
+
+                                res.json({
+                                    success: true,
+                                    message: "Order status updated and stock reduced successfully"
+                                });
+
                             }
-
-
-                            items.forEach(item => {
-
-                                db.query(
-                                    `
-                                    UPDATE products
-                                    SET stock = stock - ?
-                                    WHERE product_name = ?
-                                    AND stock >= ?
-                                    `,
-                                    [
-                                        item.quantity,
-                                        item.product_name,
-                                        item.quantity
-                                    ]
-                                );
-
-                            });
-
-
-                            res.json({
-                                success:true,
-                                message:"Order status updated and stock reduced successfully"
-                            });
-
-
-                        });
+                        );
 
 
                     } else {
 
                         res.json({
-                            success:true,
-                            message:"Order status updated successfully"
+                            success: true,
+                            message: "Order status updated successfully"
                         });
 
                     }
@@ -617,7 +606,7 @@ app.put("/api/orders/:id/status", (req, res) => {
         }
     );
 
-});
+});      
       
         // Admin Accept Order - Create Payment Waiting
         app.put("/api/orders/accept/:id", (req, res) => {
