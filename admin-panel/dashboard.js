@@ -14,37 +14,37 @@ function loadDashboard() {
 
             // Pending Orders
             const pendingOrders = orders.filter(order =>
-                order.status === "Pending"
+                order.order_status === "Pending"
             ).length;
 
             // Confirmed Orders
             const confirmedOrders = orders.filter(order =>
-                order.status === "Confirmed"
+                order.order_status === "Confirmed"
             ).length;
 
             // Packed Orders
             const packedOrders = orders.filter(order =>
-                order.status === "Packed"
+                order.order_status === "Packed"
             ).length;
 
             // Shipped Orders
             const shippedOrders = orders.filter(order =>
-                order.status === "Shipped"
+                order.order_status === "Shipped"
             ).length;
 
             // Delivered Orders
             const deliveredOrders = orders.filter(order =>
-                order.status === "Delivered"
+                order.order_status === "Delivered"
             ).length;
 
             // Cancelled Orders
             const cancelledOrders = orders.filter(order =>
-                order.status === "Cancelled"
+                order.order_status === "Cancelled"
             ).length;
 
-            // Total Revenue (only Delivered orders)
+            // Total Revenue
             const totalRevenue = orders
-                .filter(order => order.status === "Delivered")
+                .filter(order => order.order_status === "Delivered")
                 .reduce((sum, order) => {
                     return sum + Number(order.total || 0);
                 }, 0);
@@ -65,7 +65,6 @@ function loadDashboard() {
         });
 
 }
-
 // Load dashboard immediately
 loadDashboard();
 
