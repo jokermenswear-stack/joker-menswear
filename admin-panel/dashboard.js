@@ -15,7 +15,8 @@ function loadDashboard() {
         .then(res => res.json())
         .then(orders => {
 
-            console.log("ORDERS:", orders);
+            console.log("ORDERS:", JSON.stringify(orders, null, 2));
+
 
             const totalOrders = orders.length;
 
@@ -49,28 +50,21 @@ function loadDashboard() {
                     order.order_status === "Delivered"
                 )
                 .reduce((sum, order) => {
+
                     return sum + Number(order.total || 0);
+
                 }, 0);
 
 
-            // Update Cards
 
-            document.getElementById("totalOrders").innerText = totalOrders;
-
-            document.getElementById("pendingOrders").innerText = pendingOrders;
-
-            document.getElementById("confirmedOrders").innerText = confirmedOrders;
-
-            document.getElementById("packedOrders").innerText = packedOrders;
-
-            document.getElementById("shippedOrders").innerText = shippedOrders;
-
-            document.getElementById("deliveredOrders").innerText = deliveredOrders;
-
-            document.getElementById("cancelledOrders").innerText = cancelledOrders;
-
-            document.getElementById("totalRevenue").innerText =
-                "₹ " + totalRevenue;
+            updateCard("totalOrders", totalOrders);
+            updateCard("pendingOrders", pendingOrders);
+            updateCard("confirmedOrders", confirmedOrders);
+            updateCard("packedOrders", packedOrders);
+            updateCard("shippedOrders", shippedOrders);
+            updateCard("deliveredOrders", deliveredOrders);
+            updateCard("cancelledOrders", cancelledOrders);
+            updateCard("totalRevenue", "₹ " + totalRevenue);
 
 
         })
@@ -83,50 +77,75 @@ function loadDashboard() {
 }
 
 
-// ==========================
-// STORE STATUS
-// ==========================
+// Safe card update
 
-function loadStoreStatus() {
+function updateCard(id, value){
 
-    fetch(API + "/api/store-status")
-        .then(res => res.json())
-        .then(data => {
+    const element = document.getElementById(id);
 
-            const statusText =
-                document.getElementById("storeStatusText");
+    if(element){
 
-            const toggleBtn =
-                document.getElementById("storeToggleBtn");
+        element.innerText = value;
 
-
-            if (!statusText || !toggleBtn) return;
-
-
-            if (data.store_open == 1) {
-
-                statusText.innerText = "🟢 Store is Open";
-                toggleBtn.innerText = "Close Store";
-
-            } else {
-
-                statusText.innerText = "🔴 Store is Closed";
-                toggleBtn.innerText = "Open Store";
-
-            }
-
-        })
-        .catch(err => console.log("Store status error:", err));
+    }
 
 }
 
 
 
-function toggleStore() {
+// ==========================
+// STORE STATUS
+// ==========================
 
-    fetch(API + "/api/store-status/toggle", {
+function loadStoreStatus(){
 
-        method: "PUT"
+    fetch(API + "/api/store-status")
+
+    .then(res => res.json())
+
+    .then(data => {
+
+
+        const statusText =
+            document.getElementById("storeStatusText");
+
+
+        const toggleBtn =
+            document.getElementById("storeToggleBtn");
+
+
+        if(!statusText || !toggleBtn) return;
+
+
+        if(data.store_open == 1){
+
+            statusText.innerText = "🟢 Store is Open";
+            toggleBtn.innerText = "Close Store";
+
+        }
+        else{
+
+            statusText.innerText = "🔴 Store is Closed";
+            toggleBtn.innerText = "Open Store";
+
+        }
+
+
+    })
+
+    .catch(err =>
+        console.log("Store status error:", err)
+    );
+
+}
+
+
+
+function toggleStore(){
+
+    fetch(API + "/api/store-status/toggle",{
+
+        method:"PUT"
 
     })
 
@@ -140,7 +159,9 @@ function toggleStore() {
 
     })
 
-    .catch(err => console.log("Toggle error:", err));
+    .catch(err =>
+        console.log("Toggle error:",err)
+    );
 
 }
 
@@ -184,7 +205,7 @@ function loadPaymentCount(){
 
 
 // ==========================
-// START DASHBOARD
+// START
 // ==========================
 
 loadDashboard();
@@ -194,8 +215,7 @@ loadStoreStatus();
 loadPaymentCount();
 
 
-// Auto refresh
 
-setInterval(loadDashboard, 5000);
+setInterval(loadDashboard,5000);
 
-setInterval(loadPaymentCount, 5000);
+setInterval(loadPaymentCount,5000);
