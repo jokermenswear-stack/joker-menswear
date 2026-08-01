@@ -1,4 +1,4 @@
-const API = "https://joker-menswear-backend.onrender.com";
+const API = "https://joker-menswear.onrender.com";
 
 const params = new URLSearchParams(window.location.search);
 const orderId = params.get("id");
@@ -59,22 +59,31 @@ function loadOrder() {
 
             <br>
 
-            <h3>Order Status</h3>
+           <h3>Order Status</h3>
 
-            <select id="status">
+<select id="status">
 
-                <option value="Pending" ${order.status=="Pending"?"selected":""}>Pending</option>
-                <option value="Confirmed" ${order.status=="Confirmed"?"selected":""}>Confirmed</option>
-                <option value="Packed" ${order.status=="Packed"?"selected":""}>Packed</option>
-                <option value="Shipped" ${order.status=="Shipped"?"selected":""}>Shipped</option>
-                <option value="Delivered" ${order.status=="Delivered"?"selected":""}>Delivered</option>
-                <option value="Cancelled" ${order.status=="Cancelled"?"selected":""}>Cancelled</option>
-                <option value="Out of Stock" ${order.status=="Out of Stock"?"selected":""}>Out of Stock</option>
-                <option value="Payment Failed" ${order.status=="Payment Failed"?"selected":""}>Payment Failed</option>
-                <option value="Return Requested" ${order.status=="Return Requested"?"selected":""}>Return Requested</option>
-                <option value="Returned" ${order.status=="Returned"?"selected":""}>Returned</option>
+    <option value="Pending" ${order.order_status=="Pending"?"selected":""}>Pending</option>
 
-            </select>
+    <option value="Confirmed" ${order.order_status=="Confirmed"?"selected":""}>Confirmed</option>
+
+    <option value="Packed" ${order.order_status=="Packed"?"selected":""}>Packed</option>
+
+    <option value="Shipped" ${order.order_status=="Shipped"?"selected":""}>Shipped</option>
+
+    <option value="Delivered" ${order.order_status=="Delivered"?"selected":""}>Delivered</option>
+
+    <option value="Cancelled" ${order.order_status=="Cancelled"?"selected":""}>Cancelled</option>
+
+    <option value="Out of Stock" ${order.order_status=="Out of Stock"?"selected":""}>Out of Stock</option>
+
+    <option value="Payment Failed" ${order.order_status=="Payment Failed"?"selected":""}>Payment Failed</option>
+
+    <option value="Return Requested" ${order.order_status=="Return Requested"?"selected":""}>Return Requested</option>
+
+    <option value="Returned" ${order.order_status=="Returned"?"selected":""}>Returned</option>
+
+</select>
 
             <br><br>
 
@@ -110,9 +119,9 @@ function saveStatus() {
             "Content-Type": "application/json"
         },
 
-        body: JSON.stringify({
-            status: status
-        })
+       body: JSON.stringify({
+    order_status: status
+})
 
     })
     .then(res => res.json())
