@@ -536,9 +536,11 @@ app.put("/api/orders/:id/status", (req, res) => {
         const currentStatus = orderResult[0].order_status;
 
         
-          db.query(
-    "UPDATE orders SET order_status = ? WHERE id = ?",
-    [order_status, id],
+         db.query(
+    `UPDATE orders
+     SET order_status = ?, status = ?
+     WHERE id = ?`,
+    [order_status, order_status, id],
     (err2) => {
 
         if (err2) {
