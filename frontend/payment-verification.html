@@ -273,7 +273,7 @@ const orderId = params.get("orderId");
 let currentOrderId = orderId;
 
 let paymentSubmitted = false;
-
+let paymentRejected = false;
 
 
 // Load Order Details
@@ -511,22 +511,22 @@ document.getElementById("statusBox").innerHTML =
 
 if(data.payment_status==="Rejected"){
 
-paymentSubmitted = false;
+    paymentRejected = true;
+    paymentSubmitted = false;
 
-document.getElementById("statusBox").className =
-"status rejected";
+    document.getElementById("statusBox").className =
+    "status rejected";
 
-document.getElementById("statusBox").innerHTML =
+    document.getElementById("statusBox").innerHTML =
 
-"❌ Payment Rejected<br><br><b>Reason:</b><br>" +
-data.remarks +
-"<br><br>Please correct the payment details and submit again.";
+    "❌ Payment Rejected<br><br><b>Reason:</b><br>" +
+    data.remarks +
+    "<br><br>Please correct the payment details and submit again.";
 
-document.getElementById("paymentBox").style.display =
-"block";
+    document.getElementById("paymentBox").style.display =
+    "block";
 
-}
-    
+}    
 });
 
 
@@ -539,14 +539,15 @@ loadOrder();
 
 // Auto check every 3 seconds
 
-setInterval(()=>{
+setInterval(() => {
 
-    checkOrderStatus();
+    if (!paymentRejected) {
+        checkOrderStatus();
+    }
 
     checkPaymentStatus();
 
-},3000);
-
+}, 3000);
 
 </script>
 
