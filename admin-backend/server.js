@@ -1,13 +1,13 @@
-    const express = require('express');
-    const cors = require('cors');
-    const mysql = require('mysql2');
-    const multer = require('multer');
-    const XLSX = require('xlsx');
-    const http = require("http");
+const express = require('express');
+const cors = require('cors');
+const mysql = require('mysql2');
+const multer = require('multer');
+const XLSX = require('xlsx');
+const http = require("http");
 const { Server } = require("socket.io");
 const path = require("path");
 
-   const app = express();
+const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -16,7 +16,7 @@ const io = new Server(server, {
     }
 });
 
-  app.use(cors());
+app.use(cors());
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "..", "frontend")));
@@ -26,8 +26,8 @@ app.use("/sounds", express.static(path.join(__dirname, "..", "admin-panel", "sou
 app.use("/images", express.static(path.join(__dirname, "..", "frontend", "images")));
 
 const upload = multer({ dest: "uploads/" });
-    // MySQL connection
-   const db = mysql.createConnection({
+// MySQL connection
+const db = mysql.createConnection({
     host: 'sakura.proxy.rlwy.net',
     user: 'root',
     password: 'erYzmKnlZSwVGsLldIdRiIPrxdiRdWkm',
@@ -35,34 +35,34 @@ const upload = multer({ dest: "uploads/" });
     database: 'railway'
 });
 
-    db.connect((err) => {
+db.connect((err) => {
     if (err) {
         console.error('MySQL connection failed:', err);
         return;
     }
     console.log('Connected to MySQL');
-    });
+});
 
-    // Test route
- app.get("/", (req, res) => {
+// Test route
+app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "frontend", "index.html"));
 });
-    // Get all orders
-    app.get('/api/orders', (req, res) => {
+// Get all orders
+app.get('/api/orders', (req, res) => {
     const sql = 'SELECT * FROM orders ORDER BY created_at DESC';
 
     db.query(sql, (err, results) => {
         if (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Database error' });
+            console.error(err);
+            return res.status(500).json({ error: 'Database error' });
         }
 
         res.json(results);
     });
-    });
-   // Save new order
+});
+// Save new order
 app.post('/api/orders', (req, res) => {
-console.log("ORDER API RECEIVED FROM RENDER", req.body);
+    console.log("ORDER API RECEIVED FROM RENDER", req.body);
 
     const {
         product_id,
@@ -137,12 +137,12 @@ console.log("ORDER API RECEIVED FROM RENDER", req.body);
 
 
                     // Live notification to admin
-                 console.log("SENDING NEW ORDER:", orderId, customer_name);
+                    console.log("SENDING NEW ORDER:", orderId, customer_name);
 
-io.emit("new-order", {
-    orderId: orderId,
-    customer: customer_name
-});
+                    io.emit("new-order", {
+                        orderId: orderId,
+                        customer: customer_name
+                    });
 
 
                     res.json({
@@ -157,37 +157,37 @@ io.emit("new-order", {
     );
 
 });
-    // Get all products
-    app.get('/products', (req, res) => {
+// Get all products
+app.get('/products', (req, res) => {
 
     const sql = 'SELECT * FROM products';
 
     db.query(sql, (err, results) => {
 
         if (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Database error' });
+            console.error(err);
+            return res.status(500).json({ error: 'Database error' });
         }
 
         res.json(results);
 
     });
 
-    });
-   // Add new product
+});
+// Add new product
 app.post('/products', (req, res) => {
 
-   const {
-    customer_name,
-    phone,
-    address,
-    product_id,
-    product_name,
-    size,
-    quantity,
-    price,
-    status
-} = req.body;
+    const {
+        customer_name,
+        phone,
+        address,
+        product_id,
+        product_name,
+        size,
+        quantity,
+        price,
+        status
+    } = req.body;
 
     const sql = `
         INSERT INTO products
@@ -231,7 +231,7 @@ app.post('/products', (req, res) => {
     );
 
 });
-  // Bulk Upload Products from Excel
+// Bulk Upload Products from Excel
 app.post('/upload-products', upload.single('file'), (req, res) => {
 
     const workbook = XLSX.readFile(req.file.path);
@@ -276,81 +276,81 @@ app.post('/upload-products', upload.single('file'), (req, res) => {
     });
 
 });
-    // Delete Product
+// Delete Product
 
-    app.delete('/products/:id', (req, res) => {
+app.delete('/products/:id', (req, res) => {
 
-        const id = req.params.id;
+    const id = req.params.id;
 
-        const sql = "DELETE FROM products WHERE id = ?";
+    const sql = "DELETE FROM products WHERE id = ?";
 
-        db.query(sql, [id], (err, result) => {
+    db.query(sql, [id], (err, result) => {
 
-            if (err) {
-                console.log(err);
-                return res.status(500).json({
-                    error: "Delete failed"
-                });
-            }
-
-            res.json({
-                message: "Product deleted successfully"
+        if (err) {
+            console.log(err);
+            return res.status(500).json({
+                error: "Delete failed"
             });
+        }
 
+        res.json({
+            message: "Product deleted successfully"
         });
 
     });
 
-    // Get single product by ID
+});
 
-    app.get('/products/:id', (req, res) => {
+// Get single product by ID
 
-        const id = req.params.id;
+app.get('/products/:id', (req, res) => {
 
-        const sql = "SELECT * FROM products WHERE id = ?";
+    const id = req.params.id;
 
-        db.query(sql, [id], (err, result) => {
+    const sql = "SELECT * FROM products WHERE id = ?";
 
-            if (err) {
-                console.log(err);
-                return res.status(500).json({
-                    error: "Database error"
-                });
-            }
+    db.query(sql, [id], (err, result) => {
 
-            if (result.length === 0) {
-                return res.status(404).json({
-                    error: "Product not found"
-                });
-            }
+        if (err) {
+            console.log(err);
+            return res.status(500).json({
+                error: "Database error"
+            });
+        }
 
-            res.json(result[0]);
+        if (result.length === 0) {
+            return res.status(404).json({
+                error: "Product not found"
+            });
+        }
 
-        });
+        res.json(result[0]);
 
     });
-    // Update Product
 
-    app.put('/products/:id', (req, res) => {
+});
+// Update Product
 
-        const id = req.params.id;
+app.put('/products/:id', (req, res) => {
 
-        const {
-            product_code,
-            product_name,
-            category,
-            brand,
-            price,
-            image,
-            description,
-            status,
-            new_arrival,
-            offer,
-            stock
-        } = req.body;
+    const id = req.params.id;
+
+    const {
+        product_code,
+        product_name,
+        category,
+        brand,
+        price,
+        image,
+        description,
+        status,
+        new_arrival,
+        offer,
+        stock
+    } = req.body;
 
 
-        const sql = `
+    const sql = `
         UPDATE products SET
         product_code=?,
         product_name=?,
@@ -367,134 +367,132 @@ app.post('/upload-products', upload.single('file'), (req, res) => {
         `;
 
 
-        db.query(
-            sql,
-            [
-                product_code,
-                product_name,
-                category,
-                brand,
-                price,
-                image,
-                description,
-                status,
-                new_arrival,
-                offer,
-                stock,
-                id
-            ],
-            (err, result) => {
+    db.query(
+        sql,
+        [
+            product_code,
+            product_name,
+            category,
+            brand,
+            price,
+            image,
+            description,
+            status,
+            new_arrival,
+            offer,
+            stock,
+            id
+        ],
+        (err, result) => {
 
-                if(err){
-                    console.log(err);
-
-                    return res.status(500).json({
-                        error:"Update failed"
-                    });
-                }
-
-
-                res.json({
-                    message:"Product updated successfully"
-                });
-
-            }
-        );
-
-    });
-    // Admin Login
-
-    app.post('/admin-login', (req, res) => {
-
-        const { username, password } = req.body;
-
-        const sql = "SELECT * FROM admins WHERE username=? AND password=?";
-
-        db.query(sql, [username, password], (err, result) => {
-
-            if(err){
+            if (err) {
                 console.log(err);
+
                 return res.status(500).json({
-                    success:false,
-                    message:"Database error"
+                    error: "Update failed"
                 });
             }
 
 
-            if(result.length > 0){
+            res.json({
+                message: "Product updated successfully"
+            });
 
-                res.json({
-                    success:true,
-                    message:"Login successful"
-                });
+        }
+    );
 
-            }
-            else{
+});
+// Admin Login
 
-                res.json({
-                    success:false,
-                    message:"Invalid username or password"
-                });
+app.post('/admin-login', (req, res) => {
 
-            }
+    const { username, password } = req.body;
 
-        });
+    const sql = "SELECT * FROM admins WHERE username=? AND password=?";
+
+    db.query(sql, [username, password], (err, result) => {
+
+        if (err) {
+            console.log(err);
+            return res.status(500).json({
+                success: false,
+                message: "Database error"
+            });
+        }
+
+
+        if (result.length > 0) {
+
+            res.json({
+                success: true,
+                message: "Login successful"
+            });
+
+        }
+        else {
+
+            res.json({
+                success: false,
+                message: "Invalid username or password"
+            });
+
+        }
 
     });
 
-    // Get complete order details
+});
 
-    app.get("/api/orders/:id", (req, res) => {
+// Get complete order details
 
-        const orderId = req.params.id;
+app.get("/api/orders/:id", (req, res) => {
 
-        const orderSql = `
+    const orderId = req.params.id;
+
+    const orderSql = `
             SELECT *
             FROM orders
             WHERE id = ?
         `;
 
-        db.query(orderSql, [orderId], (err, orderResult) => {
+    db.query(orderSql, [orderId], (err, orderResult) => {
 
-            if (err) {
-                console.log(err);
+        if (err) {
+            console.log(err);
+
+            return res.status(500).json({
+                error: "Database error"
+            });
+        }
+
+        if (orderResult.length === 0) {
+
+            return res.status(404).json({
+                error: "Order not found"
+            });
+
+        }
+
+        const itemSql = `
+                SELECT *
+                FROM order_items
+                WHERE order_id = ?
+            `;
+
+        db.query(itemSql, [orderId], (err2, itemResult) => {
+
+            if (err2) {
+                console.log(err2);
 
                 return res.status(500).json({
                     error: "Database error"
                 });
             }
 
-            if (orderResult.length === 0) {
+            res.json({
 
-                return res.status(404).json({
-                    error: "Order not found"
-                });
+                order: orderResult[0],
 
-            }
-
-            const itemSql = `
-                SELECT *
-                FROM order_items
-                WHERE order_id = ?
-            `;
-
-            db.query(itemSql, [orderId], (err2, itemResult) => {
-
-                if (err2) {
-                    console.log(err2);
-
-                    return res.status(500).json({
-                        error: "Database error"
-                    });
-                }
-
-                res.json({
-
-                    order: orderResult[0],
-
-                    items: itemResult
-
-                });
+                items: itemResult
 
             });
 
@@ -502,9 +500,11 @@ app.post('/upload-products', upload.single('file'), (req, res) => {
 
     });
 
-    // Update Order Status
+});
 
-   app.put("/api/orders/:id/status", (req, res) => {
+// Update Order Status
+
+app.put("/api/orders/:id/status", (req, res) => {
 
     const id = req.params.id;
     const { status } = req.body;
@@ -521,7 +521,7 @@ app.post('/upload-products', upload.single('file'), (req, res) => {
 
         const currentStatus = orderResult[0].status;
 
-       // Update Order Status
+        // Update Order Status
 
 app.put("/api/orders/:id/status", (req, res) => {
 
@@ -558,139 +558,125 @@ app.put("/api/orders/:id/status", (req, res) => {
                     }
 
 
-                    // Reduce stock only when changing to Shipped first time
                     if (order_status === "Shipped" && currentStatus !== "Shipped") {
-
 
                         const itemSql =
                         "SELECT product_name, quantity FROM order_items WHERE order_id = ?";
 
 
-                        db.query(
-                            itemSql,
-                            [id],
-                            (err3, items) => {
+                        db.query(itemSql, [id], (err3, items) => {
 
-                                if (err3) {
-                                    return res.status(500).json({
-                                        success: false,
-                                        message: "Failed to get order items"
-                                    });
-                                }
+                            if (err3) {
+                                return res.status(500).json({
+                                    success:false,
+                                    message:"Failed to get order items"
+                                });
+                            }
 
 
-                                items.forEach(item => {
+                            items.forEach(item => {
 
-                                    const stockSql = `
+                                db.query(
+                                    `
                                     UPDATE products
                                     SET stock = stock - ?
                                     WHERE product_name = ?
                                     AND stock >= ?
-                                    `;
+                                    `,
+                                    [
+                                        item.quantity,
+                                        item.product_name,
+                                        item.quantity
+                                    ]
+                                );
+
+                            });
 
 
-                                    db.query(
-                                        stockSql,
-                                        [
-                                            item.quantity,
-                                            item.product_name,
-                                            item.quantity
-                                        ]
-                                    );
-
-                                });
+                            res.json({
+                                success:true,
+                                message:"Order status updated and stock reduced successfully"
+                            });
 
 
-                                res.json({
-                                    success: true,
-                                    message: "Order status updated and stock reduced successfully"
-                                });
-
-
-                            }
-                        );
+                        });
 
 
                     } else {
 
-
                         res.json({
-                            success: true,
-                            message: "Order status updated successfully"
+                            success:true,
+                            message:"Order status updated successfully"
                         });
 
-
                     }
-
 
                 }
             );
 
-
         }
     );
 
-
 });
+      
+        // Admin Accept Order - Create Payment Waiting
+        app.put("/api/orders/accept/:id", (req, res) => {
 
-// Admin Accept Order - Create Payment Waiting
-app.put("/api/orders/accept/:id", (req, res) => {
+            const orderId = req.params.id;
 
-    const orderId = req.params.id;
-
-    // Create payment entry if not already exists
-    const checkSql = `
+            // Create payment entry if not already exists
+            const checkSql = `
         SELECT * FROM payments 
         WHERE order_id = ?
     `;
 
-    db.query(checkSql, [orderId], (err, result) => {
+            db.query(checkSql, [orderId], (err, result) => {
 
-        if (err) {
-            console.log(err);
-            return res.status(500).json({
-                success:false,
-                message:"Database error"
-            });
-        }
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({
+                        success: false,
+                        message: "Database error"
+                    });
+                }
 
 
-        if(result.length === 0){
+                if (result.length === 0) {
 
-            const insertSql = `
+                    const insertSql = `
                 INSERT INTO payments
                 (order_id, payment_status)
                 VALUES (?, 'Pending')
             `;
 
 
-            db.query(insertSql, [orderId], (err2)=>{
+                    db.query(insertSql, [orderId], (err2) => {
 
-                if(err2){
-                    console.log(err2);
-                    return res.status(500).json({
-                        success:false,
-                        message:"Payment creation failed"
+                        if (err2) {
+                            console.log(err2);
+                            return res.status(500).json({
+                                success: false,
+                                message: "Payment creation failed"
+                            });
+                        }
+
+
+                        updateOrder();
+
                     });
+
+
+                } else {
+
+                    updateOrder();
+
                 }
 
 
-                updateOrder();
 
-            });
+                function updateOrder() {
 
-
-        } else {
-
-            updateOrder();
-
-        }
-
-
-
-        function updateOrder(){
-
-            const sql = `
+                    const sql = `
                 UPDATE orders
                 SET status='Confirmed',
                     order_status='Confirmed'
@@ -698,47 +684,47 @@ app.put("/api/orders/accept/:id", (req, res) => {
             `;
 
 
-            db.query(sql,[orderId],(err3)=>{
+                    db.query(sql, [orderId], (err3) => {
 
-                if(err3){
-                    console.log(err3);
+                        if (err3) {
+                            console.log(err3);
 
-                    return res.status(500).json({
-                        success:false,
-                        message:"Order update failed"
+                            return res.status(500).json({
+                                success: false,
+                                message: "Order update failed"
+                            });
+                        }
+
+
+                        // Notify customer page instantly
+                        io.emit("order-status-update", {
+                            orderId: orderId,
+                            status: "Confirmed"
+                        });
+
+
+                        res.json({
+                            success: true,
+                            message: "Order accepted"
+                        });
+
                     });
+
                 }
 
 
-                // Notify customer page instantly
-                io.emit("order-status-update",{
-                    orderId:orderId,
-                    status:"Confirmed"
-                });
-
-
-                res.json({
-                    success:true,
-                    message:"Order accepted"
-                });
-
             });
 
-        }
 
+        });
 
-    });
+        // Admin Reject Order
+        app.put("/api/orders/reject/:id", (req, res) => {
 
+            const orderId = req.params.id;
+            const { reason } = req.body;
 
-});
-
-// Admin Reject Order
-app.put("/api/orders/reject/:id", (req, res) => {
-
-    const orderId = req.params.id;
-    const { reason } = req.body;
-
-    const sql = `
+            const sql = `
         UPDATE orders
         SET status = 'Cancelled',
             order_status = 'Cancelled',
@@ -746,39 +732,39 @@ app.put("/api/orders/reject/:id", (req, res) => {
         WHERE id = ?
     `;
 
-    db.query(sql, [reason, orderId], (err) => {
+            db.query(sql, [reason, orderId], (err) => {
 
-        if (err) {
-            console.log(err);
+                if (err) {
+                    console.log(err);
 
-            return res.status(500).json({
-                success: false,
-                message: "Failed to reject order"
+                    return res.status(500).json({
+                        success: false,
+                        message: "Failed to reject order"
+                    });
+                }
+
+                io.emit("order-status-update", {
+                    orderId: orderId,
+                    status: "Cancelled",
+                    reason: reason
+                });
+
+                res.json({
+                    success: true,
+                    message: "Order rejected successfully"
+                });
+
             });
-        }
 
-        io.emit("order-status-update", {
-            orderId: orderId,
-            status: "Cancelled",
-            reason: reason
         });
 
-        res.json({
-            success: true,
-            message: "Order rejected successfully"
-        });
 
-    });
+        // Submit Payment Transaction ID
+        app.post("/api/payment/submit", (req, res) => {
 
-});
+            const { order_id, transaction_id, payment_method } = req.body;
 
- 
-// Submit Payment Transaction ID
-app.post("/api/payment/submit", (req, res) => {
-
-    const { order_id, transaction_id, payment_method } = req.body;
-
-    const sql = `
+            const sql = `
         UPDATE payments
         SET transaction_id = ?,
             payment_method = ?,
@@ -786,49 +772,49 @@ app.post("/api/payment/submit", (req, res) => {
         WHERE order_id = ?
     `;
 
-    db.query(sql, [transaction_id, payment_method, order_id], (err) => {
+            db.query(sql, [transaction_id, payment_method, order_id], (err) => {
 
-        if (err) {
-            console.log(err);
-            return res.status(500).json({
-                success: false,
-                message: "Failed to submit payment"
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({
+                        success: false,
+                        message: "Failed to submit payment"
+                    });
+                }
+
+                res.json({
+                    success: true,
+                    message: "Transaction ID submitted successfully. Admin will verify payment."
+                });
+
             });
-        }
 
-        res.json({
-            success: true,
-            message: "Transaction ID submitted successfully. Admin will verify payment."
         });
 
-    });
+        // Admin Approve Payment
+        app.put("/api/payment/approve/:order_id", (req, res) => {
 
-});
+            const orderId = req.params.order_id;
 
-// Admin Approve Payment
-app.put("/api/payment/approve/:order_id", (req, res) => {
-
-    const orderId = req.params.order_id;
-
-    // Update payments table
-    const paymentSql = `
+            // Update payments table
+            const paymentSql = `
         UPDATE payments
         SET payment_status = 'Paid'
         WHERE order_id = ?
     `;
 
-    db.query(paymentSql, [orderId], (err) => {
+            db.query(paymentSql, [orderId], (err) => {
 
-        if (err) {
-            console.log(err);
-            return res.status(500).json({
-                success: false,
-                message: "Failed to approve payment"
-            });
-        }
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({
+                        success: false,
+                        message: "Failed to approve payment"
+                    });
+                }
 
-        // Update orders table
-       const orderSql = `
+                // Update orders table
+                const orderSql = `
     UPDATE orders
     SET payment_status = 'Paid',
         order_status = 'Confirmed',
@@ -836,50 +822,50 @@ app.put("/api/payment/approve/:order_id", (req, res) => {
     WHERE id = ?
 `;
 
-        db.query(orderSql, [orderId], (err2) => {
+                db.query(orderSql, [orderId], (err2) => {
 
-            if (err2) {
-                console.log(err2);
-                return res.status(500).json({
-                    success: false,
-                    message: "Failed to update order status"
+                    if (err2) {
+                        console.log(err2);
+                        return res.status(500).json({
+                            success: false,
+                            message: "Failed to update order status"
+                        });
+                    }
+
+                    res.json({
+                        success: true,
+                        message: "Payment approved successfully"
+                    });
+
                 });
-            }
 
-            res.json({
-                success: true,
-                message: "Payment approved successfully"
             });
 
         });
 
-    });
+        // Reject Payment with Remarks
+        app.put("/api/payment/reject", (req, res) => {
 
-});
+            const { order_id, remarks } = req.body;
 
-// Reject Payment with Remarks
-app.put("/api/payment/reject", (req, res) => {
-
-    const { order_id, remarks } = req.body;
-
-    const paymentSql = `
+            const paymentSql = `
         UPDATE payments
         SET payment_status = 'Rejected',
             remarks = ?
         WHERE order_id = ?
     `;
 
-    db.query(paymentSql, [remarks, order_id], (err) => {
+            db.query(paymentSql, [remarks, order_id], (err) => {
 
-        if (err) {
-            console.log(err);
-            return res.status(500).json({
-                success: false,
-                message: "Failed to reject payment"
-            });
-        }
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({
+                        success: false,
+                        message: "Failed to reject payment"
+                    });
+                }
 
-        const orderSql = `
+                const orderSql = `
             UPDATE orders
             SET payment_status = 'Pending',
                 order_status = 'Pending',
@@ -887,68 +873,68 @@ app.put("/api/payment/reject", (req, res) => {
             WHERE id = ?
         `;
 
-        db.query(orderSql, [order_id], (err2) => {
+                db.query(orderSql, [order_id], (err2) => {
 
-            if (err2) {
-                console.log(err2);
-                return res.status(500).json({
-                    success: false,
-                    message: "Failed to update order status"
+                    if (err2) {
+                        console.log(err2);
+                        return res.status(500).json({
+                            success: false,
+                            message: "Failed to update order status"
+                        });
+                    }
+
+                    res.json({
+                        success: true,
+                        message: "Payment rejected successfully"
+                    });
+
                 });
-            }
 
-            res.json({
-                success: true,
-                message: "Payment rejected successfully"
             });
 
         });
 
-    });
+        // Get Payment Status for Customer
+        app.get("/api/payment/status/:order_id", (req, res) => {
 
-});
+            const orderId = req.params.order_id;
 
-// Get Payment Status for Customer
-app.get("/api/payment/status/:order_id", (req, res) => {
-
-    const orderId = req.params.order_id;
-
-    const sql = `
+            const sql = `
         SELECT payment_status, remarks
         FROM payments
         WHERE order_id = ?
     `;
 
-    db.query(sql, [orderId], (err, result) => {
+            db.query(sql, [orderId], (err, result) => {
 
-        if (err) {
-            console.log(err);
-            return res.status(500).json({
-                success: false,
-                message: "Database error"
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({
+                        success: false,
+                        message: "Database error"
+                    });
+                }
+
+                if (result.length === 0) {
+                    return res.json({
+                        success: false,
+                        message: "Payment not found"
+                    });
+                }
+
+                res.json({
+                    success: true,
+                    payment_status: result[0].payment_status,
+                    remarks: result[0].remarks || ""
+                });
+
             });
-        }
-
-        if (result.length === 0) {
-            return res.json({
-                success: false,
-                message: "Payment not found"
-            });
-        }
-
-        res.json({
-            success: true,
-            payment_status: result[0].payment_status,
-            remarks: result[0].remarks || ""
         });
 
-    });
-});
+        // Get Pending Payment Verifications
+        app.get("/api/payments/pending", (req, res) => {
 
-// Get Pending Payment Verifications
-app.get("/api/payments/pending", (req, res) => {
-
-    const sql = `
+            const sql = `
         SELECT p.order_id, p.transaction_id, o.customer_name, o.total
         FROM payments p
         JOIN orders o ON p.order_id = o.id
@@ -957,67 +943,70 @@ app.get("/api/payments/pending", (req, res) => {
         ORDER BY p.created_at DESC
     `;
 
-    db.query(sql, (err, result) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).json({
-                success: false,
-                message: "Database error"
-            });
-        }
+            db.query(sql, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({
+                        success: false,
+                        message: "Database error"
+                    });
+                }
 
-        res.json({
-            success: true,
-            payments: result
-        });
-    });
-});
-
-// Delete Order
-app.delete("/api/orders/:id", (req, res) => {
-
-    const orderId = req.params.id;
-
-    db.query(
-        "DELETE FROM order_items WHERE order_id = ?",
-        [orderId],
-        (err) => {
-
-            if (err) {
-                console.log(err);
-                return res.status(500).json({
-                    message: "Failed to delete order items"
+                res.json({
+                    success: true,
+                    payments: result
                 });
-            }
+            });
+        });
+
+        // Delete Order
+        app.delete("/api/orders/:id", (req, res) => {
+
+            const orderId = req.params.id;
 
             db.query(
-                "DELETE FROM payments WHERE order_id = ?",
+                "DELETE FROM order_items WHERE order_id = ?",
                 [orderId],
-                (err2) => {
+                (err) => {
 
-                    if (err2) {
-                        console.log(err2);
+                    if (err) {
+                        console.log(err);
                         return res.status(500).json({
-                            message: "Failed to delete payment"
+                            message: "Failed to delete order items"
                         });
                     }
 
                     db.query(
-                        "DELETE FROM orders WHERE id = ?",
+                        "DELETE FROM payments WHERE order_id = ?",
                         [orderId],
-                        (err3) => {
+                        (err2) => {
 
-                            if (err3) {
-                                console.log(err3);
+                            if (err2) {
+                                console.log(err2);
                                 return res.status(500).json({
-                                    message: "Failed to delete order"
+                                    message: "Failed to delete payment"
                                 });
                             }
 
-                            res.json({
-                                success: true,
-                                message: "Order deleted successfully"
-                            });
+                            db.query(
+                                "DELETE FROM orders WHERE id = ?",
+                                [orderId],
+                                (err3) => {
+
+                                    if (err3) {
+                                        console.log(err3);
+                                        return res.status(500).json({
+                                            message: "Failed to delete order"
+                                        });
+                                    }
+
+                                    res.json({
+                                        success: true,
+                                        message: "Order deleted successfully"
+                                    });
+
+                                }
+                            );
 
                         }
                     );
@@ -1025,54 +1014,51 @@ app.delete("/api/orders/:id", (req, res) => {
                 }
             );
 
-        }
-    );
+        });
 
-});
+        // Get store status
+        app.get("/api/store-status", (req, res) => {
 
-// Get store status
-app.get("/api/store-status", (req, res) => {
+            db.query("SELECT store_open FROM store_settings LIMIT 1", (err, result) => {
 
-    db.query("SELECT store_open FROM store_settings LIMIT 1", (err, result) => {
-
-        if (err) {
-            return res.status(500).json({ error: "Database error" });
-        }
-
-        res.json(result[0]);
-    });
-});
-
-// Toggle store status
-app.put("/api/store-status/toggle", (req, res) => {
-
-    db.query("SELECT store_open FROM store_settings LIMIT 1", (err, result) => {
-
-        if (err) {
-            return res.status(500).json({ error: "Database error" });
-        }
-
-        const newStatus = result[0].store_open == 1 ? 0 : 1;
-
-        db.query(
-            "UPDATE store_settings SET store_open = ? WHERE id = 1",
-            [newStatus],
-            (err2) => {
-
-                if (err2) {
-                    return res.status(500).json({ error: "Update failed" });
+                if (err) {
+                    return res.status(500).json({ error: "Database error" });
                 }
 
-                res.json({
-                    success: true,
-                    message: newStatus == 1 ? "Store Opened" : "Store Closed"
-                });
-            }
-        );
-    });
-});
-  const PORT = process.env.PORT || 3000;
-    
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+                res.json(result[0]);
+            });
+        });
+
+        // Toggle store status
+        app.put("/api/store-status/toggle", (req, res) => {
+
+            db.query("SELECT store_open FROM store_settings LIMIT 1", (err, result) => {
+
+                if (err) {
+                    return res.status(500).json({ error: "Database error" });
+                }
+
+                const newStatus = result[0].store_open == 1 ? 0 : 1;
+
+                db.query(
+                    "UPDATE store_settings SET store_open = ? WHERE id = 1",
+                    [newStatus],
+                    (err2) => {
+
+                        if (err2) {
+                            return res.status(500).json({ error: "Update failed" });
+                        }
+
+                        res.json({
+                            success: true,
+                            message: newStatus == 1 ? "Store Opened" : "Store Closed"
+                        });
+                    }
+                );
+            });
+        });
+        const PORT = process.env.PORT || 3000;
+
+        server.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
