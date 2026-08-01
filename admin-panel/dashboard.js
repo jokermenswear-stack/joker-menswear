@@ -1,7 +1,13 @@
 console.log("Dashboard JS NEW VERSION");
-console.log("API =", API);
 
 const API = "https://joker-menswear.onrender.com";
+
+console.log("API =", API);
+
+
+// ==========================
+// LOAD DASHBOARD COUNTS
+// ==========================
 
 function loadDashboard() {
 
@@ -9,129 +15,187 @@ function loadDashboard() {
         .then(res => res.json())
         .then(orders => {
 
-            // Total Orders
+            console.log("ORDERS:", orders);
+
             const totalOrders = orders.length;
 
-            // Pending Orders
             const pendingOrders = orders.filter(order =>
                 order.order_status === "Pending"
             ).length;
 
-            // Confirmed Orders
             const confirmedOrders = orders.filter(order =>
                 order.order_status === "Confirmed"
             ).length;
 
-            // Packed Orders
             const packedOrders = orders.filter(order =>
                 order.order_status === "Packed"
             ).length;
 
-            // Shipped Orders
             const shippedOrders = orders.filter(order =>
                 order.order_status === "Shipped"
             ).length;
 
-            // Delivered Orders
             const deliveredOrders = orders.filter(order =>
                 order.order_status === "Delivered"
             ).length;
 
-            // Cancelled Orders
             const cancelledOrders = orders.filter(order =>
                 order.order_status === "Cancelled"
             ).length;
 
-            // Total Revenue
+
             const totalRevenue = orders
-                .filter(order => order.order_status === "Delivered")
+                .filter(order =>
+                    order.order_status === "Delivered"
+                )
                 .reduce((sum, order) => {
                     return sum + Number(order.total || 0);
                 }, 0);
 
-            // Update Dashboard Cards
+
+            // Update Cards
+
             document.getElementById("totalOrders").innerText = totalOrders;
+
             document.getElementById("pendingOrders").innerText = pendingOrders;
+
             document.getElementById("confirmedOrders").innerText = confirmedOrders;
+
             document.getElementById("packedOrders").innerText = packedOrders;
+
             document.getElementById("shippedOrders").innerText = shippedOrders;
+
             document.getElementById("deliveredOrders").innerText = deliveredOrders;
+
             document.getElementById("cancelledOrders").innerText = cancelledOrders;
-            document.getElementById("totalRevenue").innerText = "₹ " + totalRevenue;
+
+            document.getElementById("totalRevenue").innerText =
+                "₹ " + totalRevenue;
+
 
         })
         .catch(error => {
+
             console.log("Dashboard Error:", error);
+
         });
 
 }
-// Load dashboard immediately
-loadDashboard();
 
-// Auto refresh every 5 seconds
-setInterval(loadDashboard, 5000);
 
-// Load current store status
+// ==========================
+// STORE STATUS
+// ==========================
+
 function loadStoreStatus() {
 
     fetch(API + "/api/store-status")
         .then(res => res.json())
         .then(data => {
 
-            const statusText = document.getElementById("storeStatusText");
-            const toggleBtn = document.getElementById("storeToggleBtn");
+            const statusText =
+                document.getElementById("storeStatusText");
+
+            const toggleBtn =
+                document.getElementById("storeToggleBtn");
+
+
+            if (!statusText || !toggleBtn) return;
+
 
             if (data.store_open == 1) {
+
                 statusText.innerText = "🟢 Store is Open";
                 toggleBtn.innerText = "Close Store";
+
             } else {
+
                 statusText.innerText = "🔴 Store is Closed";
                 toggleBtn.innerText = "Open Store";
+
             }
-        });
+
+        })
+        .catch(err => console.log("Store status error:", err));
+
 }
 
-// Toggle store open/close
+
+
 function toggleStore() {
 
     fetch(API + "/api/store-status/toggle", {
+
         method: "PUT"
+
     })
+
     .then(res => res.json())
+
     .then(data => {
 
         alert(data.message);
+
         loadStoreStatus();
 
-    });
+    })
+
+    .catch(err => console.log("Toggle error:", err));
+
 }
 
-// Load store status when dashboard opens
-loadStoreStatus();
 
-// Load pending payment verification count
+
+// ==========================
+// PAYMENT COUNT
+// ==========================
 
 function loadPaymentCount(){
 
     fetch(API + "/api/payments/pending")
+
     .then(res => res.json())
+
     .then(data => {
 
-        const count = data.payments.length;
 
-        document.getElementById("paymentCount").innerText =
-        "(" + count + ")";
+        const paymentCount =
+            document.getElementById("paymentCount");
+
+
+        if(paymentCount){
+
+            paymentCount.innerText =
+                "(" + data.payments.length + ")";
+
+        }
+
 
     })
+
     .catch(error => {
+
         console.log("Payment count error:", error);
+
     });
 
 }
 
 
-// Load immediately
+
+// ==========================
+// START DASHBOARD
+// ==========================
+
+loadDashboard();
+
+loadStoreStatus();
+
 loadPaymentCount();
 
-// Auto refresh every 5 seconds
+
+// Auto refresh
+
+setInterval(loadDashboard, 5000);
+
 setInterval(loadPaymentCount, 5000);
