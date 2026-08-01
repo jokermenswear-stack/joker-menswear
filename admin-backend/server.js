@@ -506,9 +506,12 @@ app.get("/api/orders/:id", (req, res) => {
 
 app.put("/api/orders/:id/status", (req, res) => {
 
+    console.log("========== STATUS UPDATE ==========");
+    console.log("Order ID:", req.params.id);
+    console.log("Request Body:", req.body);
+
     const id = req.params.id;
     const { order_status } = req.body;
-
 
     db.query(
         "SELECT order_status FROM orders WHERE id = ?",
