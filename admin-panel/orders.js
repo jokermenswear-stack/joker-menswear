@@ -54,25 +54,34 @@ function loadOrders() {
     <td>${order.phone}</td>
     <td>₹ ${order.total}</td>
     <td>
-    <select class="status-dropdown"
-            style="background:${getStatusColor(order.status)}; color:white;"
-            onchange="updateStatus(${order.id}, this.value)">
+   <select class="status-dropdown"
+        style="background:${getStatusColor(order.order_status)}; color:white;"
+        onchange="updateStatus(${order.id}, this.value)">
 
-        <option ${order.status=="Pending"?"selected":""}>Pending</option>
-        <option ${order.status=="Confirmed"?"selected":""}>Confirmed</option>
-        <option ${order.status=="Packed"?"selected":""}>Packed</option>
-        <option ${order.status=="Shipped"?"selected":""}>Shipped</option>
-        <option ${order.status=="Delivered"?"selected":""}>Delivered</option>
-        <option ${order.status=="Cancelled"?"selected":""}>Cancelled</option>
-        <option ${order.status=="Out of Stock"?"selected":""}>Out of Stock</option>
-        <option ${order.status=="Payment Failed"?"selected":""}>Payment Failed</option>
-        <option ${order.status=="Return Requested"?"selected":""}>Return Requested</option>
-        <option ${order.status=="Returned"?"selected":""}>Returned</option>
+    <option ${order.order_status=="Pending" ? "selected" : ""}>Pending</option>
 
-    </select>
+    <option ${order.order_status=="Confirmed" ? "selected" : ""}>Confirmed</option>
+
+    <option ${order.order_status=="Packed" ? "selected" : ""}>Packed</option>
+
+    <option ${order.order_status=="Shipped" ? "selected" : ""}>Shipped</option>
+
+    <option ${order.order_status=="Delivered" ? "selected" : ""}>Delivered</option>
+
+    <option ${order.order_status=="Cancelled" ? "selected" : ""}>Cancelled</option>
+
+    <option ${order.order_status=="Out of Stock" ? "selected" : ""}>Out of Stock</option>
+
+    <option ${order.order_status=="Payment Failed" ? "selected" : ""}>Payment Failed</option>
+
+    <option ${order.order_status=="Return Requested" ? "selected" : ""}>Return Requested</option>
+
+    <option ${order.order_status=="Returned" ? "selected" : ""}>Returned</option>
+
+</select>
 </td>
 
-    <td>${order.created_at}</td>
+<td>${order.created_at}</td>
 
   <td>
 
@@ -139,8 +148,8 @@ function updateStatus(id, status) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            status: status
-        })
+    order_status: status
+})
     })
     .then(res => res.json())
     .then(() => {
