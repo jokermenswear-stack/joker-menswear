@@ -1,4 +1,5 @@
-console.log("Dashboard JS loaded");
+console.log("Dashboard JS NEW VERSION");
+console.log("API =", API);
 
 const API = "https://joker-menswear.onrender.com";
 
