@@ -521,65 +521,116 @@ app.post('/upload-products', upload.single('file'), (req, res) => {
 
         const currentStatus = orderResult[0].status;
 
-        // Update order status
-        db.query(
-            "UPDATE orders SET status = ? WHERE id = ?",
-            [status, id],
-            (err2) => {
+       // Update Order Status
 
-                if (err2) {
-                    return res.status(500).json({
-                        success: false,
-                        message: "Database error"
-                    });
-                }
+app.put("/api/orders/:id/status", (req, res) => {
 
-                // Reduce stock only when changing to Shipped for the first time
-                if (status === "Shipped" && currentStatus !== "Shipped") {
+    const id = req.params.id;
+    const { order_status } = req.body;
 
-                    const itemSql = "SELECT product_name, quantity FROM order_items WHERE order_id = ?";
 
-                    db.query(itemSql, [id], (err3, items) => {
+    db.query(
+        "SELECT order_status FROM orders WHERE id = ?",
+        [id],
+        (err, orderResult) => {
 
-                        if (err3) {
-                            return res.status(500).json({
-                                success: false,
-                                message: "Failed to get order items"
-                            });
-                        }
+            if (err || orderResult.length === 0) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Order not found"
+                });
+            }
 
-                        // Update stock for each item
-                        items.forEach(item => {
 
-                            const stockSql = `
-                                UPDATE products
-                                SET stock = stock - ?
-                                WHERE product_name = ? AND stock >= ?
-                            `;
+            const currentStatus = orderResult[0].order_status;
 
-                            db.query(
-                                stockSql,
-                                [item.quantity, item.product_name, item.quantity]
-                            );
+
+            db.query(
+                "UPDATE orders SET order_status = ? WHERE id = ?",
+                [order_status, id],
+                (err2) => {
+
+                    if (err2) {
+                        return res.status(500).json({
+                            success: false,
+                            message: "Database error"
                         });
+                    }
+
+
+                    // Reduce stock only when changing to Shipped first time
+                    if (order_status === "Shipped" && currentStatus !== "Shipped") {
+
+
+                        const itemSql =
+                        "SELECT product_name, quantity FROM order_items WHERE order_id = ?";
+
+
+                        db.query(
+                            itemSql,
+                            [id],
+                            (err3, items) => {
+
+                                if (err3) {
+                                    return res.status(500).json({
+                                        success: false,
+                                        message: "Failed to get order items"
+                                    });
+                                }
+
+
+                                items.forEach(item => {
+
+                                    const stockSql = `
+                                    UPDATE products
+                                    SET stock = stock - ?
+                                    WHERE product_name = ?
+                                    AND stock >= ?
+                                    `;
+
+
+                                    db.query(
+                                        stockSql,
+                                        [
+                                            item.quantity,
+                                            item.product_name,
+                                            item.quantity
+                                        ]
+                                    );
+
+                                });
+
+
+                                res.json({
+                                    success: true,
+                                    message: "Order status updated and stock reduced successfully"
+                                });
+
+
+                            }
+                        );
+
+
+                    } else {
+
 
                         res.json({
                             success: true,
-                            message: "Order status updated and stock reduced successfully"
+                            message: "Order status updated successfully"
                         });
-                    });
 
-                } else {
 
-                    // For all other statuses, just update status
-                    res.json({
-                        success: true,
-                        message: "Order status updated successfully"
-                    });
+                    }
+
+
                 }
-            }
-        );
-    });
+            );
+
+
+        }
+    );
+
+
 });
 
 // Admin Accept Order - Create Payment Waiting
