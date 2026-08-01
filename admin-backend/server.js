@@ -514,33 +514,41 @@ app.put("/api/orders/:id/status", (req, res) => {
     const { order_status } = req.body;
 
     db.query(
-        "SELECT order_status FROM orders WHERE id = ?",
-        [id],
-        (err, orderResult) => {
+    "SELECT order_status FROM orders WHERE id = ?",
+    [id],
+    (err, orderResult) => {
 
-            if (err || orderResult.length === 0) {
-                return res.status(500).json({
-                    success: false,
-                    message: "Order not found"
-                });
-            }
+        if (err) {
+            console.log("SELECT ERROR:", err);
+            return res.status(500).json({
+                success: false,
+                message: "Database error"
+            });
+        }
 
+        if (orderResult.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
 
-            const currentStatus = orderResult[0].order_status;
+        const currentStatus = orderResult[0].order_status;
 
+        
+          db.query(
+    "UPDATE orders SET order_status = ? WHERE id = ?",
+    [order_status, id],
+    (err2) => {
 
-            db.query(
-                "UPDATE orders SET order_status = ? WHERE id = ?",
-                [order_status, id],
-                (err2) => {
+        if (err2) {
+            console.log("UPDATE ERROR:", err2);
 
-                    if (err2) {
-                        return res.status(500).json({
-                            success: false,
-                            message: "Database error"
-                        });
-                    }
-
+            return res.status(500).json({
+                success: false,
+                message: "Database error"
+            });
+        }
 
                     // Reduce stock only when changing to Shipped first time
                     if (order_status === "Shipped" && currentStatus !== "Shipped") {
