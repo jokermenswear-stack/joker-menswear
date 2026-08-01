@@ -223,18 +223,23 @@ function deleteOrder(id) {
         return;
     }
 
-    fetch(API + "/api/orders/" + id, {
-        method: "DELETE"
+  fetch(API + "/api/orders/" + id + "/status", {
+    method: "PUT",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        order_status: status
     })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.message);
-        loadOrders();
-    })
-    .catch(err => {
-        console.log(err);
-        alert("Failed to delete order.");
-    });
+})
+.then(res => res.json())
+.then(() => {
+    alert("Order Status Updated");
+    loadOrders();
+})
+.catch(err => {
+    console.log("Status Update Error:", err);
+});
 
 }
 
