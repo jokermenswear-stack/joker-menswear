@@ -22,22 +22,19 @@ function login() {
 
     .then(data => {
 
-        if (data.success) {
+    if (data.success) {
 
-            localStorage.setItem("adminLoggedIn", "true");
+        localStorage.setItem("adminLoggedIn", "true");
 
-            alert("Login Successful");
+        window.location.href = "/admin-panel/dashboard.html";
 
-            // Open the dashboard on the website service
-            window.location.href = "https://joker-menswear.onrender.com/admin-panel/dashboard.html";
+    } else {
 
-        } else {
+        alert("Wrong Username or Password");
 
-            alert("Wrong Username or Password");
+    }
 
-        }
-
-    })
+})
 
     .catch(error => {
 
