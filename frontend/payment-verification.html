@@ -274,6 +274,7 @@ let currentOrderId = orderId;
 
 let paymentSubmitted = false;
 let paymentRejected = false;
+let paymentApproved = false;
 
 
 // Load Order Details
@@ -330,6 +331,9 @@ console.log(err);
 
 function checkOrderStatus(){
 
+if(paymentApproved){
+    return;
+}
 
 fetch(API + "/api/orders/" + orderId)
 
@@ -495,15 +499,17 @@ fetch(API + "/api/payment/status/" + orderId)
 
 if(data.payment_status==="Paid"){
 
+paymentApproved = true;
+
+document.getElementById("paymentBox").style.display =
+"none";
 
 document.getElementById("statusBox").className =
 "status confirmed";
 
-
 document.getElementById("statusBox").innerHTML =
 
 "✅ Payment Verified<br><br>Your order has been confirmed.<br><br>We will begin packing your order shortly.";
-
 
 }
 

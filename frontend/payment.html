@@ -119,9 +119,10 @@ Thank you for shopping with <strong>Joker Menswear</strong>. Please complete you
 
 <br>
 
-<button type="button" onclick="sendWhatsApp()">
+<button id="placeOrderBtn" type="button" onclick="sendWhatsApp()">
     Place Order
 </button>
+
 </form>
 </div>
     
@@ -161,6 +162,11 @@ fetch("https://joker-menswear.onrender.com/products")
 });
 
 function sendWhatsApp() {
+
+    const btn = document.getElementById("placeOrderBtn");
+
+    btn.disabled = true;
+    btn.innerText = "Submitting...";
 
     let name = document.getElementById("name").value;
     let phone = document.getElementById("phone").value;
