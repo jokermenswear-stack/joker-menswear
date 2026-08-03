@@ -60,8 +60,11 @@ app.get('/api/orders', (req, res) => {
         res.json(results);
     });
 });
-// Save new order
+
+
+// Save new order with duplicate protection
 app.post('/api/orders', (req, res) => {
+
     console.log("ORDER API RECEIVED FROM RENDER", req.body);
 
     const {
@@ -77,86 +80,198 @@ app.post('/api/orders', (req, res) => {
     } = req.body;
 
 
-    const orderSql = `
-        INSERT INTO orders
-        (customer_name, phone, address, total, status)
-        VALUES (?, ?, ?, ?, ?)
-    `;
-
-
     const total = Number(price) * Number(quantity);
 
 
-    db.query(
-        orderSql,
-        [
-            customer_name,
-            phone,
-            address,
-            total,
-            status || "Pending"
-        ],
-        (err, result) => {
+    // Check existing same order
+    const checkSql = `
+        SELECT orders.id
+        FROM orders
+        INNER JOIN order_items
+        ON orders.id = order_items.order_id
+        WHERE orders.phone = ?
+        AND order_items.product_id = ?
+        AND order_items.size = ?
+        AND order_items.quantity = ?
+        AND orders.order_status IN ('Pending','Confirmed')
+        LIMIT 1
+    `;
 
-            if (err) {
-                console.error(err);
+
+    db.query(
+        checkSql,
+        [
+            phone,
+            product_id,
+            size,
+            quantity
+        ],
+        (checkErr, existingOrder) => {
+
+
+            if (checkErr) {
+
+                console.log(checkErr);
+
                 return res.status(500).json({
-                    error: "Failed to save order"
+                    error: "Duplicate check failed"
                 });
+
             }
 
 
-            const orderId = result.insertId;
+            // Existing order found
+            if (existingOrder.length > 0) {
 
 
-            const itemSql = `
-                INSERT INTO order_items
-                (order_id, product_id, product_name, size, quantity, price)
+                console.log(
+                    "Existing order found:",
+                    existingOrder[0].id
+                );
+
+
+                return res.json({
+
+                    success: true,
+
+                    duplicate: true,
+
+                    order_id: existingOrder[0].id
+
+                });
+
+            }
+
+
+
+            // Create new order
+
+            const orderSql = `
+                INSERT INTO orders
+                (
+                    customer_name,
+                    phone,
+                    address,
+                    total,
+                    status,
+                    order_status
+                )
                 VALUES (?, ?, ?, ?, ?, ?)
             `;
 
 
-            db.query(
-                itemSql,
-                [
-                    orderId,
-                    product_id,
-                    product_name,
-                    size,
-                    quantity,
-                    price
-                ],
-                (err2) => {
 
-                    if (err2) {
-                        console.error(err2);
+            db.query(
+                orderSql,
+                [
+                    customer_name,
+                    phone,
+                    address,
+                    total,
+                    status || "Pending",
+                    status || "Pending"
+                ],
+                (err, result) => {
+
+
+                    if (err) {
+
+                        console.error(err);
+
                         return res.status(500).json({
-                            error: "Failed to save order item"
+                            error: "Failed to save order"
                         });
+
                     }
 
 
-                    // Live notification to admin
-                    console.log("SENDING NEW ORDER:", orderId, customer_name);
-
-                    io.emit("new-order", {
-                        orderId: orderId,
-                        customer: customer_name
-                    });
+                    const orderId = result.insertId;
 
 
-                    res.json({
-                        success: true,
-                        order_id: orderId
-                    });
+
+                    const itemSql = `
+                        INSERT INTO order_items
+                        (
+                            order_id,
+                            product_id,
+                            product_name,
+                            size,
+                            quantity,
+                            price
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    `;
+
+
+
+                    db.query(
+                        itemSql,
+                        [
+                            orderId,
+                            product_id,
+                            product_name,
+                            size,
+                            quantity,
+                            price
+                        ],
+                        (err2) => {
+
+
+                            if (err2) {
+
+                                console.error(err2);
+
+                                return res.status(500).json({
+                                    error: "Failed to save order item"
+                                });
+
+                            }
+
+
+
+                            // Live notification to admin
+                            console.log(
+                                "SENDING NEW ORDER:",
+                                orderId,
+                                customer_name
+                            );
+
+
+                            io.emit("new-order", {
+
+                                orderId: orderId,
+
+                                customer: customer_name
+
+                            });
+
+
+
+                            res.json({
+
+                                success: true,
+
+                                duplicate: false,
+
+                                order_id: orderId
+
+                            });
+
+
+                        }
+                    );
+
 
                 }
             );
 
+
         }
     );
 
+
 });
+
 // Get all products
 app.get('/products', (req, res) => {
 
