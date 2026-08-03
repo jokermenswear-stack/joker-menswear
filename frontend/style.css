@@ -929,6 +929,13 @@ form button:hover{
     box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
+form button:disabled{
+    background:#888;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow:none;
+}
+
 /* Payment Logo */
 .payment-logo{
     text-align: center;
