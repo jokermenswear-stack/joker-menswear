@@ -1,19 +1,19 @@
-function login(){
+function login() {
 
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
 
-   fetch("https://joker-menswear-backend.onrender.com/admin-login", {
+    fetch("https://joker-menswear-backend.onrender.com/admin-login", {
 
-        method:"POST",
+        method: "POST",
 
-        headers:{
-            "Content-Type":"application/json"
+        headers: {
+            "Content-Type": "application/json"
         },
 
-        body:JSON.stringify({
-            username:username,
-            password:password
+        body: JSON.stringify({
+            username: username,
+            password: password
         })
 
     })
@@ -22,14 +22,16 @@ function login(){
 
     .then(data => {
 
-        if(data.success){
+        if (data.success) {
+
+            localStorage.setItem("adminLoggedIn", "true");
 
             alert("Login Successful");
 
-            window.location.href="dashboard.html";
+            // Open the dashboard on the website service
+            window.location.href = "https://joker-menswear.onrender.com/admin-panel/dashboard.html";
 
-        }
-        else{
+        } else {
 
             alert("Wrong Username or Password");
 
@@ -37,7 +39,7 @@ function login(){
 
     })
 
-    .catch(error=>{
+    .catch(error => {
 
         console.log(error);
         alert("Server connection failed");
