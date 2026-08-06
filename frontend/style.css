@@ -137,21 +137,49 @@ nav a:hover{
     color:#444;
 }
 
-.card a{
-    display:inline-block;
+.card .product-buttons{
+    display:flex;
+    gap:10px;
     margin-top:15px;
+}
+
+.card .product-buttons a,
+.card .product-buttons button{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
     padding:12px 25px;
-    background:#25D366;
     color:#fff;
     text-decoration:none;
+    border:none;
     border-radius:30px;
     font-weight:bold;
     transition:0.3s;
+    cursor:pointer;
+    font-size:16px;
+    box-sizing:border-box;
 }
 
-.card a:hover{
+/* Buy Now */
+.buy-btn{
+    background:#25D366;
+}
+
+.buy-btn:hover{
     background:#128C7E;
 }
+
+/* Add to Cart */
+.cart-btn{
+    background:#FF9800;
+}
+
+.cart-btn:hover{
+    background:#F57C00;
+}
+
+
 
 .badge{
     position:absolute;
