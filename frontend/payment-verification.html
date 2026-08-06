@@ -193,8 +193,8 @@ button:hover{
 
 
 <p>
-<strong>Product:</strong>
-<span id="productName"></span>
+<strong>Products:</strong>
+<div id="productList"></div>
 </p>
 
 
@@ -301,15 +301,25 @@ data.order.customer_name;
 
 
 document.getElementById("total").innerText =
-data.order.total;
+Number(data.order.total).toFixed(2);
 
 
-if(data.items.length > 0){
+let html = "";
 
-document.getElementById("productName").innerText =
-data.items[0].product_name;
+data.items.forEach(item => {
 
-}
+    html += `
+        <div style="margin-bottom:8px;">
+            ${item.product_name}
+            (${item.size})
+            × ${item.quantity}
+            - ₹${Number(item.price).toFixed(2)}
+        </div>
+    `;
+
+});
+
+document.getElementById("productList").innerHTML = html;
 
 
 checkOrderStatus();
