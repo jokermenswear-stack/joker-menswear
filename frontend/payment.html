@@ -229,10 +229,9 @@ function showCartItems(){
     cartItems.forEach((item,index)=>{
 
 
-        let price =
-        Number(
-        item.price.replace(/[^\d]/g,"")
-        );
+       let price = parseFloat(
+    item.price.replace(/[^\d.]/g,"")
+);
 
 
         total += price * item.quantity;

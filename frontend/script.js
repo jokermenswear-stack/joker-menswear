@@ -465,7 +465,6 @@ document.querySelectorAll("a[id$='BuyNow'], button").forEach(btn => {
 
 // Run when customer page loads
 checkStoreStatus();
-
 function addToCart(productId) {
 
     console.log("Clicked:", productId);
@@ -501,8 +500,47 @@ function addToCart(productId) {
 
     }
 
+
     localStorage.setItem("cart", JSON.stringify(cart));
+
+
+    // Update cart notification count
+    updateCartCount();
+
 
     alert(product.name + " added to cart");
 
 }
+
+
+
+function updateCartCount() {
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    let count = 0;
+
+    cart.forEach(item => {
+
+        count += item.quantity;
+
+    });
+
+
+    const cartCount = document.getElementById("cartCount");
+
+    if (cartCount) {
+
+        cartCount.innerText = count;
+
+    }
+
+}
+
+
+// Load cart count when page opens
+document.addEventListener("DOMContentLoaded", function(){
+
+    updateCartCount();
+
+});
