@@ -4,15 +4,14 @@ socket.on("connect", () => {
     console.log("Socket connected:", socket.id);
 });
 
-socket.on("new-order", (data) => {
-    console.log("NEW ORDER RECEIVED:", data);
-});
 
 if (Notification.permission !== "granted") {
     Notification.requestPermission();
 }
 
 const notificationSound = new Audio("https://joker-menswear.onrender.com/sounds/notification.mp3");
+
+notificationSound.load();
 
 // Sound will be enabled after clicking the bell once
 let soundEnabled = false;
@@ -175,25 +174,37 @@ let unreadCount = 0;
 // New order notification
 socket.on("new-order", (data) => {
 
-    // Play sound only if enabled
-    if (soundEnabled) {
-        notificationSound.currentTime = 0;
-        notificationSound.play().catch(err => console.log(err));
-    }
+    console.log("NEW ORDER RECEIVED:", data);
+
+
+    notificationSound.currentTime = 0;
+
+    notificationSound.play()
+    .then(() => {
+        console.log("Notification sound played");
+    })
+    .catch(err => {
+        console.log("Sound blocked:", err);
+    });
+
 
     unreadCount++;
 
     const count = document.getElementById("notificationCount");
+
     count.style.display = "inline-block";
+
     count.innerText = unreadCount;
 
+
     if (Notification.permission === "granted") {
+
         new Notification("🛒 New Order", {
             body: "Customer: " + data.customer
         });
-    } else {
-        alert("🔔 New Order Received!\nCustomer: " + data.customer);
+
     }
+
 
     loadOrders();
 
