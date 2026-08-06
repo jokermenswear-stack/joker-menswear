@@ -321,16 +321,30 @@ card.innerHTML = `
 
     <p><strong>Size:</strong> ${sizes}</p>
 
-   ${product.stock > 0
-  ? `<p><strong>Status:</strong> ✅ In Stock</p>
+  ${product.stock > 0
+  ? `
+     <p><strong>Status:</strong> ✅ In Stock</p>
      <p>🚚 Free Shipping</p>
-     <a id="${id}BuyNow" href="payment.html?id=${id}">
-        Buy Now
-     </a>`
-  : `<p><strong>Status:</strong> ❌ Out of Stock</p>
+
+     <div class="product-buttons">
+
+        <a id="${id}BuyNow" href="payment.html?id=${id}" class="buy-btn">
+            Buy Now
+        </a>
+
+        <button class="cart-btn" onclick="addToCart('${id}')">
+            Add to Cart
+        </button>
+
+     </div>
+     `
+  : `
+     <p><strong>Status:</strong> ❌ Out of Stock</p>
+
      <button disabled style="background:gray; cursor:not-allowed;">
         Current Out of Stock
-     </button>`
+     </button>
+     `
 }
 `;
 

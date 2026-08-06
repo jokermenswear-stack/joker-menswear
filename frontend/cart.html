@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Joker Menswear</title>
+
+    <link rel="icon" href="images/logo.jpg">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body{
+            font-family:Poppins,sans-serif;
+            background:#f5f5f5;
+            margin:0;
+        }
+
+        .cart-container{
+            max-width:900px;
+            margin:30px auto;
+            background:#fff;
+            padding:20px;
+            border-radius:10px;
+        }
+
+        h1{
+            text-align:center;
+        }
+
+        #cartItems{
+            margin-top:20px;
+        }
+
+        .cart-total{
+            margin-top:20px;
+            text-align:right;
+            font-size:22px;
+            font-weight:bold;
+        }
+
+        .cart-buttons{
+            display:flex;
+            gap:15px;
+            margin-top:25px;
+        }
+
+        .cart-buttons a,
+        .cart-buttons button{
+            flex:1;
+            padding:14px;
+            border:none;
+            text-decoration:none;
+            text-align:center;
+            background:#111;
+            color:white;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+        .empty{
+            text-align:center;
+            padding:40px;
+            color:gray;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="cart-container">
+
+    <h1>🛒 Shopping Cart</h1>
+
+    <div id="cartItems">
+
+        <div class="empty">
+            Your cart is empty.
+        </div>
+
+    </div>
+
+    <div class="cart-total">
+        Total: ₹0
+    </div>
+
+    <div class="cart-buttons">
+        <a href="index.html">Continue Shopping</a>
+        <button disabled>Proceed to Checkout</button>
+    </div>
+
+</div>
+
+</body>
+</html>
