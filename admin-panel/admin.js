@@ -3,7 +3,7 @@ function login() {
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
 
-    fetch("https://joker-menswear-backend.onrender.com/admin-login", {
+    fetch("https://joker-menswear.onrender.com/admin-login", {
 
         method: "POST",
 

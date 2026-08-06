@@ -1,4 +1,4 @@
-fetch(https://joker-menswear-backend.onrender.com")
+fetch(https://joker-menswear.onrender.com")
 .then(res => res.json())
 .then(data => {
     console.log(data);
@@ -29,7 +29,7 @@ if(id){
     };
 
 
-    fetch(https://joker-menswear-backend.onrender.com, {
+    fetch(https://joker-menswear.onrender.com, {
 
         method: "POST",
 
@@ -63,7 +63,7 @@ if(id){
 
 function loadProducts(){
 
-    fetch(https://joker-menswear-backend.onrender.com)
+    fetch(https://joker-menswear.onrender.com)
 
     .then(res => res.json())
 
@@ -121,7 +121,7 @@ function uploadExcel(){
     formData.append("file", file);
 
 
-    fetch("https://joker-menswear-backend.onrender.com", {
+    fetch("https://joker-menswear.onrender.com", {
 
         method: "POST",
         body: formData
@@ -152,7 +152,7 @@ function deleteProduct(id){
 
     if(confirm("Are you sure you want to delete this product?")){
 
-        fetch(`https://joker-menswear-backend.onrender.com/${id}`, {
+        fetch(`https://joker-menswear.onrender.com/${id}`, {
             method: "DELETE"
         })
 
@@ -182,7 +182,7 @@ function editProduct(id){
 
     console.log("Editing product:", id);
 
-    fetch(`https://joker-menswear-backend.onrender.com/${id}`)
+    fetch(`https://joker-menswear.onrender.com/${id}`)
 
     .then(res => res.json())
 
@@ -230,7 +230,7 @@ function updateProduct(id){
     };
 
 
-    fetch(`https://joker-menswear-backend.onrender.com/${id}`, {
+    fetch(`https://joker-menswear.onrender.com/${id}`, {
 
         method: "PUT",
 

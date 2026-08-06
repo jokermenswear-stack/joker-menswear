@@ -149,7 +149,7 @@ async function sendWhatsApp() {
     if (!confirmOrder) {
         return;
     }
-    const response = await fetch("https://joker-menswear-backend.onrender.com/api/orders", {
+    const response = await fetch("https://joker-menswear.onrender.com/api/orders", {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
@@ -420,7 +420,7 @@ let storeOpen = true;
 async function checkStoreStatus() {
 
     try {
-      const res = await fetch("https://joker-menswear-backend.onrender.com/api/store-status");        const data = await res.json();
+      const res = await fetch("https://joker-menswear.onrender.com/api/store-status");        const data = await res.json();
 
         storeOpen = data.store_open == 1;
 

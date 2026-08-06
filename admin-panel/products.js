@@ -1,4 +1,4 @@
-fetch("https://joker-menswear-backend.onrender.com/products")
+fetch("https://joker-menswear.onrender.com/products")
 
 .then(res => res.json())
 
@@ -51,7 +51,7 @@ function deleteProduct(id){
     if(confirm("Delete this product?")){
 
 
-       fetch(`https://joker-menswear-backend.onrender.com/products/${id}`, {
+       fetch(`https://joker-menswear.onrender.com/products/${id}`, {
 
             method:"DELETE"
 

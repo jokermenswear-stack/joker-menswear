@@ -1,4 +1,4 @@
-const API = "https://joker-menswear-backend.onrender.com";
+const API = "https://joker-menswear.onrender.com";
 
 
 function loadStock(){

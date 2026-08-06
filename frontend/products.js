@@ -1,7 +1,7 @@
 
 var products = {};
 
-fetch("https://joker-menswear-backend.onrender.com/products")
+fetch("https://joker-menswear.onrender.com/products")
 .then(res => res.json())
 .then(data => {
 
@@ -30,7 +30,7 @@ fetch("https://joker-menswear-backend.onrender.com/products")
 .catch(async err => {
     console.error(err);
 
-    const res = await fetch("https://joker-menswear-backend.onrender.com/products");
+    const res = await fetch("https://joker-menswear.onrender.com/products");
     console.log("Status:", res.status);
     console.log("Content-Type:", res.headers.get("content-type"));
     console.log(await res.text());
