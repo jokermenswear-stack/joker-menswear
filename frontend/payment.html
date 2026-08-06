@@ -367,8 +367,8 @@ size:size,
 
 quantity:Number(qty),
 
-price:Number(
-item.price.replace(/[^\d]/g,"")
+price: parseFloat(
+    item.price.replace(/[^\d.]/g, "")
 )
 
 });
@@ -407,7 +407,7 @@ else {
             document.getElementById("quantity").value
         ),
 
-        price: Number(product.price)
+        price: parseFloat(product.price)
 
     });
 
