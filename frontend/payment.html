@@ -381,42 +381,39 @@ item.price.replace(/[^\d]/g,"")
 }
 
 
-
 // BUY NOW
 
-else{
+else {
+
+    if(
+        document.getElementById("size").value == "Select Size" ||
+        document.getElementById("quantity").value == ""
+    ){
+
+        alert("Please select size and quantity");
+        return;
+
+    }
 
 
-items.push({
+    items.push({
 
-if(
-document.getElementById("size").value=="Select Size" ||
-document.getElementById("quantity").value==""
-){
+        product_id: product.id,
 
-alert("Please select size and quantity");
-return;
+        product_name: product.product_name,
 
-}    
+        size: document.getElementById("size").value,
 
-product_id:product.id,
+        quantity: Number(
+            document.getElementById("quantity").value
+        ),
 
-product_name:product.product_name,
+        price: Number(product.price)
 
-size:
-document.getElementById("size").value,
-
-quantity:
-Number(document.getElementById("quantity").value),
-
-price:
-Number(product.price)
-
-});
+    });
 
 
 }
-
 
 
 
