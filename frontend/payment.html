@@ -24,19 +24,15 @@
 <p class="payment-subtitle">
 Thank you for shopping with <strong>Joker Menswear</strong>. Please complete your payment and fill in the order details below.
 </p>
-<div class="product-summary">
+<div class="product-summary" id="productSummary">
 
     <h3>Your Selected Product</h3>
 
     <div id="imageContainer">
 
-   
+        <img id="productImage" src="" alt="Product">
 
-    <img id="productImage" src="" alt="Product">
-
-   
-
-</div>
+    </div>
 
     <h2 id="productName">Product Name</h2>
 
@@ -45,6 +41,8 @@ Thank you for shopping with <strong>Joker Menswear</strong>. Please complete you
     <p id="productPrice">₹0</p>
 
 </div>
+
+   
 <div class="order-process">
 
     <h3>📋 Order Process</h3>
@@ -126,100 +124,376 @@ Thank you for shopping with <strong>Joker Menswear</strong>. Please complete you
 </form>
 </div>
     
-
 <script>
 
-let product;
+const backendURL = "https://joker-menswear-backend.onrender.com";
+
 const params = new URLSearchParams(window.location.search);
+
 const productId = params.get("id");
 
-fetch("https://joker-menswear.onrender.com/products")
-.then(res => res.json())
-.then(data => {
+const isCartCheckout = params.get("cart") === "true";
 
-    console.log("Product ID:", productId);
-    console.log("API Data:", data);
+let product = null;
 
-  product = data.find(item => item.product_code == productId);
+let cartItems = [];
 
-    console.log("Selected Product:", product);
 
-    if(product){
 
-       document.getElementById("productImage").src =
-    Array.isArray(product.images)
-    ? product.images[0]
-    : product.images.split(",")[0].trim();
+// LOAD DATA
 
-        document.getElementById("productName").innerText =
-            product.product_name;
+async function loadOrderDetails(){
 
-        document.getElementById("productPrice").innerText =
-            "₹" + product.price;
+    const response = await fetch(
+        backendURL + "/products"
+    );
+
+    const products = await response.json();
+
+
+
+    // CART CHECKOUT
+
+    if(isCartCheckout){
+
+        cartItems =
+        JSON.parse(localStorage.getItem("cart")) || [];
+
+
+        if(cartItems.length === 0){
+
+            alert("Your cart is empty");
+
+            window.location.href="cart.html";
+
+            return;
+
+        }
+
+
+        showCartItems();
+
+        return;
 
     }
 
-});
-
-function sendWhatsApp() {
-
-    const btn = document.getElementById("placeOrderBtn");
-
-    btn.disabled = true;
-    btn.innerText = "Submitting...";
-
-    let name = document.getElementById("name").value;
-    let phone = document.getElementById("phone").value;
-    let address = document.getElementById("address").value;
-    let size = document.getElementById("size").value;
-    let quantity = document.getElementById("quantity").value;
-
-    let productName = document.getElementById("productName").innerText;
-    let priceText = document.getElementById("productPrice").innerText;
-
-    let price = priceText.replace("₹","");
 
 
-    // Save order to database
-    console.log("PRODUCT DATA:", product);
-    console.log("PAYMENT ORDER STARTED");
-   fetch("https://joker-menswear.onrender.com/api/orders", {
+    // BUY NOW
 
-        method: "POST",
+    product = products.find(
+        item => item.product_code == productId
+    );
 
-        headers: {
-            "Content-Type": "application/json"
-        },
 
-      body: JSON.stringify({
-    product_id: product.id,
-    customer_name: name,
-    phone: phone,
-    address: address,
-product_name: product.product_name,
-    size: size,
-    quantity: quantity,
-    price: parseFloat(product.price.replace(/[^\d.]/g, "")),
-    status: "Pending"
-})
+    if(product){
 
-    })
-    .then(res => res.json())
-   .then(data => {
+        document.getElementById("productImage").src =
+        Array.isArray(product.images)
+        ? product.images[0]
+        : product.images.split(",")[0].trim();
 
-    console.log("Order Saved:", data);
 
-    alert("Redirecting to payment verification...");
 
-    window.location.href =
-    "./payment-verification.html?orderId=" + data.order_id;
+        document.getElementById("productName").innerText =
+        product.product_name;
 
-})
-    .catch(err => {
-        console.log("Order Error:", err);
-    });
+
+
+        document.getElementById("productPrice").innerText =
+        "₹" + product.price;
+
+    }
 
 }
+
+
+
+
+// SHOW CART PRODUCTS
+
+function showCartItems(){
+
+    let box =
+    document.getElementById("productSummary");
+
+
+    let html =
+    "<h3>Your Cart Products</h3>";
+
+
+    let total = 0;
+
+
+
+    cartItems.forEach((item,index)=>{
+
+
+        let price =
+        Number(
+        item.price.replace(/[^\d]/g,"")
+        );
+
+
+        total += price * item.quantity;
+
+
+
+        html += `
+
+        <div>
+
+        <img src="${item.image}" width="80">
+
+        <h3>${item.name}</h3>
+
+        <p>${item.price}</p>
+
+
+        <label>Size</label>
+
+        <select id="size_${index}">
+
+        <option>Select Size</option>
+        <option>S</option>
+        <option>M</option>
+        <option>L</option>
+        <option>XL</option>
+        <option>XXL</option>
+        <option>28</option>
+        <option>30</option>
+        <option>32</option>
+        <option>34</option>
+        <option>36</option>
+        <option>38</option>
+
+        </select>
+
+
+        <br><br>
+
+
+        Quantity:
+
+        <input 
+        id="qty_${index}"
+        type="number"
+        value="${item.quantity}"
+        min="1">
+
+
+        </div>
+
+        <hr>
+
+        `;
+
+
+    });
+
+
+    html +=
+
+    `<h2>Total: ₹${total}</h2>`;
+
+
+    box.innerHTML = html;
+
+}
+
+
+
+
+
+// PLACE ORDER
+
+async function sendWhatsApp(){
+
+
+let name =
+document.getElementById("name").value.trim();
+
+
+let phone =
+document.getElementById("phone").value.trim();
+
+
+let address =
+document.getElementById("address").value.trim();
+
+
+
+if(
+name=="" ||
+phone=="" ||
+address==""
+){
+
+alert("Please fill delivery details");
+
+return;
+
+}
+
+
+
+let items=[];
+
+
+
+// CART ORDER
+
+if(isCartCheckout){
+
+
+cartItems.forEach((item,index)=>{
+
+
+let size =
+document.getElementById("size_"+index).value;
+
+
+let qty =
+document.getElementById("qty_"+index).value;
+
+
+
+items.push({
+
+product_id:item.id,
+
+product_name:item.name,
+
+size:size,
+
+quantity:Number(qty),
+
+price:Number(
+item.price.replace(/[^\d]/g,"")
+)
+
+});
+
+
+});
+
+
+}
+
+
+
+// BUY NOW
+
+else{
+
+
+items.push({
+
+if(
+document.getElementById("size").value=="Select Size" ||
+document.getElementById("quantity").value==""
+){
+
+alert("Please select size and quantity");
+return;
+
+}    
+
+product_id:product.id,
+
+product_name:product.product_name,
+
+size:
+document.getElementById("size").value,
+
+quantity:
+Number(document.getElementById("quantity").value),
+
+price:
+Number(product.price)
+
+});
+
+
+}
+
+
+
+
+const response =
+await fetch(
+
+backendURL + "/api/orders",
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+
+body:JSON.stringify({
+
+customer_name:name,
+
+phone:phone,
+
+address:address,
+
+items:items,
+
+status:"Pending"
+
+})
+
+});
+
+
+const result =
+await response.json();
+
+
+
+if(result.success){
+
+
+if(isCartCheckout){
+
+localStorage.removeItem("cart");
+
+}
+
+
+alert(
+"Order placed successfully\nOrder ID: #"
++result.order_id
+);
+
+
+window.location.href =
+"payment-verification.html?orderId="
++result.order_id;
+
+
+}
+
+else{
+
+alert("Order failed");
+
+}
+
+
+}
+
+
+
+loadOrderDetails();
+
 
 </script>
 

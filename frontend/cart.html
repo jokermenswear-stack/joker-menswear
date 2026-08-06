@@ -71,13 +71,7 @@
 
     <h1>🛒 Shopping Cart</h1>
 
-    <div id="cartItems">
-
-        <div class="empty">
-            Your cart is empty.
-        </div>
-
-    </div>
+   <div id="cartItems"></div>
 
     <div class="cart-total">
         Total: ₹0
@@ -89,6 +83,132 @@
     </div>
 
 </div>
+
+<script>
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+const cartItems = document.getElementById("cartItems");
+const totalBox = document.querySelector(".cart-total");
+const checkoutBtn = document.querySelector(".cart-buttons button");
+
+function loadCart() {
+
+    let total = 0;
+
+    cartItems.innerHTML = "";
+
+    if (cart.length === 0) {
+
+        cartItems.innerHTML = `
+            <div class="empty">
+                <h2>🛒 Your cart is empty</h2>
+                <p>Add products to continue shopping.</p>
+            </div>
+        `;
+
+        totalBox.innerHTML = "Total : ₹0";
+
+        checkoutBtn.disabled = true;
+        checkoutBtn.style.background = "gray";
+        checkoutBtn.style.cursor = "not-allowed";
+
+        return;
+    }
+
+    checkoutBtn.disabled = false;
+    checkoutBtn.style.background = "#111";
+    checkoutBtn.style.cursor = "pointer";
+
+    cart.forEach((item, index) => {
+
+        const price = Number(String(item.price).replace(/[^\d.]/g, ""));
+        const quantity = Number(item.quantity);
+
+        total += price * quantity;
+
+        cartItems.innerHTML += `
+
+        <div style="
+            display:flex;
+            gap:15px;
+            align-items:center;
+            margin-bottom:20px;
+            border-bottom:1px solid #ddd;
+            padding-bottom:15px;
+            flex-wrap:wrap;
+        ">
+
+            <img
+                src="${item.image}"
+                width="90"
+                height="90"
+                style="
+                    border-radius:8px;
+                    object-fit:cover;
+                ">
+
+            <div style="flex:1;min-width:180px;">
+
+                <h3>${item.name}</h3>
+
+                <p><strong>Price :</strong> ${item.price}</p>
+
+                <p><strong>Size :</strong> ${item.size}</p>
+
+                <p><strong>Quantity :</strong> ${item.quantity}</p>
+
+                <p><strong>Subtotal :</strong> ₹${price * quantity}</p>
+
+            </div>
+
+            <button
+                onclick="removeItem(${index})"
+                style="
+                    background:#dc3545;
+                    color:white;
+                    border:none;
+                    padding:10px 16px;
+                    border-radius:6px;
+                    cursor:pointer;
+                    font-weight:bold;
+                ">
+                Remove
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+    totalBox.innerHTML = "<strong>Total : ₹" + total + "</strong>";
+
+}
+
+function removeItem(index) {
+
+    if (!confirm("Remove this product from cart?")) {
+        return;
+    }
+
+    cart.splice(index, 1);
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    loadCart();
+
+}
+
+checkoutBtn.addEventListener("click", function () {
+
+    window.location.href = "payment.html?cart=true";
+
+});
+
+loadCart();
+
+</script>
 
 </body>
 </html>
