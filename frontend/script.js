@@ -465,3 +465,34 @@ document.querySelectorAll("a[id$='BuyNow'], button").forEach(btn => {
 
 // Run when customer page loads
 checkStoreStatus();
+
+function addToCart(productId) {
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const product = products[productId];
+
+    if (!product) {
+        return;
+    }
+
+    const existing = cart.find(item => item.id === productId);
+
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+
+        cart.push({
+            id: productId,
+            name: product.name,
+            price: product.price,
+            image: product.images[0],
+            quantity: 1
+        });
+
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    alert(product.name + " added to cart.");
+}
