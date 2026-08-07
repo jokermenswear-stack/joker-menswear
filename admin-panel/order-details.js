@@ -14,6 +14,19 @@ function loadOrder() {
             const order = data.order;
             const items = data.items;
 
+            const orderDate = new Date(order.created_at);
+
+const formattedDate = orderDate.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+});
+
             let productsHTML = "";
 
             items.forEach(item => {
@@ -39,7 +52,7 @@ function loadOrder() {
             <p><b>Phone:</b> ${order.phone}</p>
             <p><b>Address:</b> ${order.address}</p>
             <p><b>Total:</b> ₹ ${order.total}</p>
-            <p><b>Date:</b> ${order.created_at}</p>
+            <p><b>Date:</b> ${formattedDate}</p>
 
             <hr>
 
