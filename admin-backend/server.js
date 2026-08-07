@@ -111,135 +111,199 @@ app.post('/api/orders', (req, res) => {
     });
 
 
+// ===============================
+// CREATE ORDER SIGNATURE
+// ===============================
 
-    // Create order
+const orderSignature = items
+.map(item =>
+`${item.product_id || item.id}-${item.size || ""}-${item.quantity || item.qty || 1}`
+)
+.sort()
+.join("|");
+console.log("ORDER SIGNATURE:", orderSignature);
+console.log("ITEMS:", items);
 
-    const orderSql = `
-        INSERT INTO orders
-        (
-            customer_name,
-            phone,
-            address,
-            total,
-            status,
-            order_status
-        )
-        VALUES (?, ?, ?, ?, ?, ?)
-    `;
+if(!orderSignature || orderSignature.includes("undefined")){
+    console.log("Invalid order signature:", orderSignature);
+    return res.status(400).json({
+        error:"Invalid order data"
+    });
+}
 
+// Check duplicate
+db.query(
+`
+SELECT id
+FROM orders
+WHERE phone = ?
+AND order_signature = ?
+AND order_status NOT IN ('Delivered','Cancelled')
+LIMIT 1
+`,
+[phone, orderSignature],
+(err, result) => {
 
-    db.query(
-        orderSql,
-        [
-            customer_name,
-            phone,
-            address,
-            total,
-            status || "Pending",
-            status || "Pending"
-        ],
-        (err, result) => {
+    if(err){
+        console.log(err);
+        return res.status(500).json({
+            error:"Duplicate check failed"
+        });
+    }
 
+    if(result.length){
 
-            if (err) {
+        return res.json({
+            success:true,
+            duplicate:true,
+            order_id:result[0].id
+        });
 
-                console.log(err);
+    }   
+    
+    
+   // Create order
 
-                return res.status(500).json({
-                    error:"Order creation failed"
-                });
-
-            }
-
-
-            const orderId = result.insertId;
-
-
-
-            // Insert all products
-
-            const itemSql = `
-                INSERT INTO order_items
-                (
-                    order_id,
-                    product_id,
-                    product_name,
-                    size,
-                    quantity,
-                    price
-                )
-                VALUES ?
-            `;
-
-
-            const itemValues = items.map(item => [
-
-                orderId,
-                item.product_id,
-                item.product_name,
-                item.size || "",
-                item.quantity,
-                item.price
-
-            ]);
+const orderSql = `
+INSERT INTO orders
+(
+    customer_name,
+    phone,
+    address,
+    total,
+    status,
+    order_status,
+    order_signature
+)
+VALUES (?, ?, ?, ?, ?, ?, ?)
+`;
 
 
-
-            db.query(
-                itemSql,
-                [itemValues],
-                (itemErr)=>{
-
-
-                    if(itemErr){
-
-                        console.log(itemErr);
-
-                        return res.status(500).json({
-                            error:"Order items failed"
-                        });
-
-                    }
+const orderData = [
+    customer_name,
+    phone,
+    address,
+    total,
+    status || "Pending",
+    status || "Pending",
+    orderSignature
+];
 
 
-
-                    // Notify Admin
-
-                    io.emit("new-order",{
-
-                        orderId: orderId,
-
-                        customer: customer_name
-
-                    });
+console.log("FINAL INSERT DATA:", orderData);
 
 
+db.query(
+    orderSql,
+    orderData,
+    (err, result) => {
 
-                    console.log(
-                        "NEW ORDER SENT TO ADMIN:",
-                        orderId
-                    );
+        if (err) {
 
+            console.log("ORDER INSERT ERROR:", err);
 
-
-                    res.json({
-
-                        success:true,
-
-                        order_id:orderId
-
-                    });
-
-
-                }
-            );
-
+            return res.status(500).json({
+                error:"Order creation failed"
+            });
 
         }
-    );
 
 
-});
+        const orderId = result.insertId;
+
+
+        console.log(
+            "ORDER CREATED:",
+            orderId,
+            "SIGNATURE:",
+            orderSignature
+        );
+
+
+
+        // Insert all products
+
+        const itemSql = `
+        INSERT INTO order_items
+        (
+            order_id,
+            product_id,
+            product_name,
+            size,
+            quantity,
+            price
+        )
+        VALUES ?
+        `;
+
+
+
+        const itemValues = items.map(item => [
+
+            orderId,
+            item.product_id,
+            item.product_name,
+            item.size || "",
+            item.quantity,
+            item.price
+
+        ]);
+
+
+
+        db.query(
+            itemSql,
+            [itemValues],
+            (itemErr)=>{
+
+
+                if(itemErr){
+
+                    console.log(
+                        "ORDER ITEMS ERROR:",
+                        itemErr
+                    );
+
+                    return res.status(500).json({
+                        error:"Order items failed"
+                    });
+
+                }
+
+
+
+                // Notify Admin
+
+                io.emit("new-order",{
+
+                    orderId: orderId,
+                    customer: customer_name
+
+                });
+
+
+
+                console.log(
+                    "NEW ORDER SENT TO ADMIN:",
+                    orderId
+                );
+
+
+
+                res.json({
+
+                    success:true,
+                    order_id:orderId
+
+                });
+
+
+            }
+        );
+
+
+    }
+);
 
 // Get all products
 app.get('/products', (req, res) => {

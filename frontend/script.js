@@ -168,7 +168,16 @@ async function sendWhatsApp() {
 });
 
 const result = await response.json();
+// Duplicate order found
+if (result.duplicate) {
 
+    window.location.href =
+        "payment-verification.html?orderId=" + result.order_id;
+
+    return;
+}
+
+// Order save failed
 if (!result.success) {
     alert("Failed to save order.");
     return;
@@ -177,7 +186,7 @@ if (!result.success) {
 // Show Order ID to customer
 alert(
     "Thank you! Your order has been placed successfully.\\n\\n" +
-    "Your Order ID is: #" + result.orderId + "\\n\\n" +
+    "Your Order ID is: #" + result.order_id + "\\n\\n" +
     "Please save this Order ID to track your order later."
 );
 let message =

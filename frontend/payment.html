@@ -150,7 +150,7 @@ async function loadOrderDetails(){
 
     const products = await response.json();
 
-
+    
 
     // CART CHECKOUT
 
@@ -397,9 +397,9 @@ else {
 
     items.push({
 
-        product_id: product.id,
+        product_id: product.product_code,
 
-        product_name: product.product_name,
+        product_name: product.name || product.product_name,
 
         size: document.getElementById("size").value,
 
@@ -414,7 +414,13 @@ else {
 
 }
 
+if(phone.length !== 10 || isNaN(phone)){
 
+alert("Enter valid 10 digit mobile number");
+
+return;
+
+}
 
 const response =
 await fetch(
