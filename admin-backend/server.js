@@ -945,57 +945,58 @@ app.put("/api/orders/:id/status", (req, res) => {
 
         });
 
-        // Admin Approve Payment
-        app.put("/api/payment/approve/:order_id", (req, res) => {
+      // Admin Approve Payment
+app.put("/api/payment/approve/:order_id", (req, res) => {
 
-            const orderId = req.params.order_id;
+    const orderId = req.params.order_id;
 
-            // Update payments table
-            const paymentSql = `
+    const paymentSql = `
         UPDATE payments
         SET payment_status = 'Paid'
         WHERE order_id = ?
     `;
 
-            db.query(paymentSql, [orderId], (err) => {
+    db.query(paymentSql, [orderId], (err) => {
 
-                if (err) {
-                    console.log(err);
-                    return res.status(500).json({
-                        success: false,
-                        message: "Failed to approve payment"
-                    });
-                }
+        if (err) {
+            console.log(err);
+            return res.status(500).json({
+                success:false,
+                message:"Failed to approve payment"
+            });
+        }
 
-                // Update orders table
-                const orderSql = `
-    UPDATE orders
-    SET payment_status = 'Paid',
-        order_status = 'Confirmed',
-        status = 'Confirmed'
-    WHERE id = ?
-`;
 
-                db.query(orderSql, [orderId], (err2) => {
+        const orderSql = `
+            UPDATE orders
+            SET payment_status = 'Paid',
+                order_status = 'Confirmed',
+                status = 'Confirmed'
+            WHERE id = ?
+        `;
 
-                    if (err2) {
-                        console.log(err2);
-                        return res.status(500).json({
-                            success: false,
-                            message: "Failed to update order status"
-                        });
-                    }
 
-                    res.json({
-                        success: true,
-                        message: "Payment approved successfully"
-                    });
+        db.query(orderSql, [orderId], (err2) => {
 
+            if (err2) {
+                console.log(err2);
+                return res.status(500).json({
+                    success:false,
+                    message:"Failed to update order status"
                 });
+            }
 
+
+            res.json({
+                success:true,
+                message:"Payment approved successfully"
             });
 
         });
+
+    });
+
+});
 
         // Reject Payment with Remarks
         app.put("/api/payment/reject", (req, res) => {
