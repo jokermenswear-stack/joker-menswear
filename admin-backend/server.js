@@ -131,6 +131,8 @@ if(!orderSignature || orderSignature.includes("undefined")){
     });
 }
 
+
+
 // Check duplicate
 db.query(
 `
@@ -304,6 +306,8 @@ db.query(
 
     }
 );
+
+});
 
 // Get all products
 app.get('/products', (req, res) => {
@@ -1207,6 +1211,7 @@ app.put("/api/orders/:id/status", (req, res) => {
                 );
             });
         });
+
         const PORT = process.env.PORT || 3000;
 
         server.listen(PORT, () => {
